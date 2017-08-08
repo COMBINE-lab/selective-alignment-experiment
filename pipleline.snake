@@ -1,0 +1,156 @@
+import sys, os
+
+##########################################################
+#How to run 
+#snakemake -j 16 -s pipleline.snake build_indices --config out="./rsem/" indices="./test_indices"
+#snakemake -j 16 -s pipleline.snake run_fast_tools --config out="/mnt/scratch6/selective_alignment_data/rsem/" quant="./test_quant" indices="./test_indices/"
+
+##########################################################
+#requires snakemake, python3, pyfasta to be installed
+#save this file and provide all the binaries and their path
+#in variables below.
+#to run flux pipeline:
+#snakemake run_flux_pipeline
+#to run rsem pipeline:
+#snakemake run_rsem_pipeline
+##########################################################
+
+pwd = os.getcwd()
+bin = "/home/hirak/bio-env/bin/"
+proj_dir = "/home/hirak/Projects/"
+
+##########################################################
+#Paths for binaries
+#We assume these binaries are available and their path can
+#be specifies below:
+#1. rsem-prepare-reference
+#2. rsem-simulator
+#3. salmon (co-mapping branch)
+#4. kallisto
+#5. bowtie2
+#6. STAR
+##########################################################
+
+
+##########################RSEM BINARY################################
+rsem_prepare_reference_binary=os.path.join(bin,"rsem-prepare-reference")
+rsem_calculate_expression_binary=os.path.join(bin,"rsem-calculate-expression")
+rsem_simulate_reads_binary=os.path.join(bin,"rsem-simulate-reads")
+##########################BOWTIE2 BINARY#############################
+bowtie2_binary=os.path.join(bin,"bowtie2")
+##########################STAR BINARY################################
+star_binary=os.path.join(bin,"STAR")
+#####################################################################
+
+################################BINARY###############################
+kallisto_binary = os.path.join(proj_dir,"kallisto/build/src/kallisto")
+hera_build_binary = os.path.join(proj_dir,"hera/build/hera_build")
+hera_quant_binary = os.path.join(proj_dir,"hera/build/hera")
+salmon_sl_binary = os.path.join(proj_dir,"salmon/build/src/salmon")
+prep_ref_file = "/mnt/scratch6/selective_alignment_data/rsem_prep_ref/reference.transcripts.fa"
+gtf_file = "/mnt/scratch6/selective_alignment_data/gtf/gencode.v26.annotation.gtf"
+genome_file = "/mnt/scratch6/selective_alignment_data/ref/GRCh38.primary_assembly.genome.fa"
+#####################################################################
+
+
+##########################################################
+rsem_transcriptome_full_path="/mnt/scratch6/selective_alignment_data/transcript_clean.fasta"
+rsem_gtf_file="/mnt/scratch6/selective_alignment_data/gtf/gencode.v26.annotation.gtf"
+rsem_transcriptome_60_percent_path = "/mnt/scratch6/selective_alignment_data/transcriptome_60.fa"
+rsem_mate_1 = "/mnt/scratch6/selective_alignment_data/real_data/ERR188140_1.fastq.gz"
+rsem_mate_2 = "/mnt/scratch6/selective_alignment_data/real_data/ERR188140_2.fastq.gz"
+rsem_folder= config["out"]
+rsem_exp = os.path.join(rsem_folder,"rsem_exp")
+simulation_folder = os.path.join(rsem_folder,"rsem_sim")
+ref_folder = os.path.join(rsem_folder,"ref_dir")
+model="model"
+reference="reference"
+threads=8
+#gid_tid_subset = "/mnt/scratch6/selective_alignment_data/gid_tid_subset.txt"
+isoform_result = "model.isoform.result"
+##########################################################
+
+rule build_indices:
+    threads: 16
+    run:
+        indices_folder=config["indices"]
+        kallisto_ind = os.path.join(indices_folder,"kallisto_ind")
+        salmon_ind = os.path.join(indices_folder,"salmon_ind")
+        hera_ind = os.path.join(indices_folder,"hera_ind")
+        shell("mkdir -p {}".format(salmon_ind))
+        shell("mkdir -p {}".format(hera_ind))
+        print("building salmon index")
+        #shell("{salmon_sl_binary} index -t {prep_ref_file} -i {salmon_ind} -p 16 -k 25")
+        print("building hera index")
+        print("{hera_build_binary} --fasta {genome_file} --gtf {gtf_file} --outdir {hera_ind}")
+        shell("{hera_build_binary} --fasta {genome_file} --gtf {gtf_file} --outdir {hera_ind}/")
+        print("building kallisto index")
+        shell("{kallisto_binary} index -i {kallisto_ind} -k 25 {prep_ref_file}")
+
+rule run_fast_tools:
+    threads: 16
+    run:
+        quant_folder=config["quant"]
+        indices_folder=config["indices"]
+        kallisto_ind = os.path.join(indices_folder,"kallisto_ind")
+        salmon_ind = os.path.join(indices_folder,"salmon_ind")
+        hera_ind = os.path.join(indices_folder,"hera_ind")
+        salmon_out = os.path.join(quant_folder,"salmon_out")
+        kallisto_out = os.path.join(quant_folder,"kallisto_out")
+        hera_out = os.path.join(quant_folder,"hera_out")
+        shell("mkdir -p {}".format(salmon_out))
+        shell("mkdir -p {}".format(kallisto_out))
+        shell("mkdir -p {}".format(hera_out))
+        #print("{hera_quant_binary} quant -i {hera_ind} -t 16 -w 1 {simulation_folder}/{} {simulation_folder}/{} -o {hera_out}".format("sim_1.fq","sim_2.fq"))
+        shell("{hera_quant_binary} quant -i {hera_ind} -t 16 -w 1 {simulation_folder}/sim_1.fq {simulation_folder}/sim_2.fq -o {hera_out}")
+        shell("{salmon_sl_binary} quant -i {salmon_ind} -l IU -1 {simulation_folder}/sim_1.fq -2 {simulation_folder}/sim_2.fq -p 16 -o {salmon_out} --softFilter --editDistance 4 --useRangeClusterEqClasses 4")
+        shell("{kallisto_binary} quant -i {kallisto_ind} -o {kallisto_out} -t 16 {simulation_folder}/sim_1.fq {simulation_folder}/sim_2.fq")
+
+rule run_rsem:
+    input:
+        transcriptome={rsem_transcriptome_full_path}
+    output:
+        ref_folder,
+        rsem_exp,
+        simulation_folder
+    threads: 8
+    run:
+        shell("mkdir -p {}".format(ref_folder))
+        shell("mkdir -p {}".format(rsem_exp))
+        shell("mkdir -p {}".format(simulation_folder))
+        shell("{rsem_prepare_reference_binary} --bowtie2 --bowtie2-path {bin} --transcript-to-gene-map  {gid_tid_subset} {rsem_transcriptome_60_percent_path} {ref_folder}/{reference}")
+        shell("{rsem_calculate_expression_binary} -p {threads} --paired-end --bowtie2 --bowtie2-path {bin} --paired-end {rsem_mate_1} {rsem_mate_2} {ref_folder}/{reference} {rsem_exp}/{model}")
+        shell("{rsem_simulate_reads_binary} {ref_folder}/{reference} {rsem_exp}/model.stat/model.model {rsem_exp}/model.isoforms.results 0.0987 15000000 {simulation_folder}/sim")
+
+rule run_rsem_prepare_ref:
+    input:
+        transcriptome={rsem_transcriptome_full_path}
+    output:
+        ref_folder
+    threads: 8
+    run:
+        gid_tid_subset = config["subset"]
+        shell("mkdir -p {}".format(ref_folder))
+        shell("{rsem_prepare_reference_binary} --bowtie2 --bowtie2-path {bin} --transcript-to-gene-map  {gid_tid_subset} {rsem_transcriptome_60_percent_path} {ref_folder}/{reference}")
+        #shell("{rsem_calculate_expression_binary} -p {threads} --paired-end --bowtie2 --bowtie2-path {bin} {rsem_mate_1} {rsem_mate_2} {ref_folder}/{reference} {rsem_folder}/{model}")
+
+rule run_rsem_calculate_exp:
+    input:
+        transcriptome={rsem_transcriptome_full_path}
+    output:
+        rsem_exp
+    threads: 8
+    run:
+        shell("mkdir -p {}".format(rsem_exp))
+        #shell("{rsem_prepare_reference_binary} --bowtie2 --bowtie2-path {bin} --transcript-to-gene-map  {gid_tid_subset} {rsem_transcriptome_60_percent_path} {ref_folder}/{reference}")
+        shell("{rsem_calculate_expression_binary} -p {threads} --paired-end --bowtie2 --bowtie2-path {bin} --paired-end {rsem_mate_1} {rsem_mate_2} {ref_folder}/{reference} {rsem_exp}/{model}")
+    
+rule run_rsem_simulate:
+    input:
+        transcriptome={rsem_transcriptome_full_path}
+    output:
+        simulation_folder
+    threads: 8
+    run:
+        shell("mkdir -p {}".format(simulation_folder))
+        shell("{rsem_simulate_reads_binary} {ref_folder}/{reference} {rsem_exp}/model.stat/model.model {rsem_exp}/model.isoforms.results 0.0987 15000000 {simulation_folder}/sim")
