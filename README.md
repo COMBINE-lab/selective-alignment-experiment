@@ -36,7 +36,7 @@ gunzip gencode.v26.pc_transcripts.fa.gz
 # tr_prob is probability of choosing a transcript from the 
 # chosen gene, produces gid_tid_subset.txt and
 # trandcript_<percent>.fa
-python generate_transcript_subset.py gid_tid.txt tid.txt gencode.v26.pc_transcripts.fa <gene_prob> <tran_prob> 
+python generate_transcript_subset.py gid_tid.txt tid.txt transcript_clean.fa <gene_prob> <tran_prob> 
 ~~~
 
 #### RSEM pipeline for generating simulated reads
