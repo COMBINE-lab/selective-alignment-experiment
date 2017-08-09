@@ -4,12 +4,15 @@ from collections import defaultdict
 from Bio import SeqIO
 
 gid_tid_file = sys.argv[1]
-transcriptome_file = sys.argv[2]
-gene_prob = sys.argv[3]
-tr_prob = sys.argv[4]
+tid_list = sys.argv[2]
+transcriptome_file = sys.argv[3]
+gene_prob = sys.argv[4]
+tr_prob = sys.argv[5]
 total_prob = float(gene_prob) * float(tr_prob)
 
-df2 = pd.read_table(gid_tid_file,header=None,names=['gid','tid'])
+df = pd.read_table(gid_tid_file,header=None,names=['gid','tid'])
+pdtid = pd.read_table(tid_list,header=None,names=['tid'])
+df2 = df[df['tid'].isin(pdtid['tid'])]
 
 gid_tid = defaultdict(list)
 for row in df2.itertuples():

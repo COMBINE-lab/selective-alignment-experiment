@@ -56,7 +56,6 @@ genome_file = "/mnt/scratch6/selective_alignment_data/ref/GRCh38.primary_assembl
 ##########################################################
 rsem_transcriptome_full_path="/mnt/scratch6/selective_alignment_data/transcript_clean.fasta"
 rsem_gtf_file="/mnt/scratch6/selective_alignment_data/gtf/gencode.v26.annotation.gtf"
-rsem_transcriptome_60_percent_path = "/mnt/scratch6/selective_alignment_data/transcriptome_60.fa"
 rsem_mate_1 = "/mnt/scratch6/selective_alignment_data/real_data/ERR188140_1.fastq.gz"
 rsem_mate_2 = "/mnt/scratch6/selective_alignment_data/real_data/ERR188140_2.fastq.gz"
 rsem_folder= config["out"]
@@ -113,8 +112,11 @@ rule run_rsem:
         ref_folder,
         rsem_exp,
         simulation_folder
-    threads: 8
+    threads: 16
     run:
+        gid_tid_subset = config["subset"]
+        rsem_transcriptome_60_percent_path = config["tr"]
+        print(gid_tid_subset)
         shell("mkdir -p {}".format(ref_folder))
         shell("mkdir -p {}".format(rsem_exp))
         shell("mkdir -p {}".format(simulation_folder))
