@@ -21,7 +21,9 @@ wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_26/gencode.v26.pc_
 gunzip gencode.v26.annotation.gtf.gz
 gunzip GRCh38.p10.genome.fa.gz
 gunzip gencode.v26.pc_transcripts.fa.gz
-# clean fasta file b/c gencode names are longer create transcript_clean.fasta
+# clean fasta file b/c gencode names are longer 
+# create transcript_clean.fasta
+# Also create a tid.txt file
 ./clean_gencode.sh gencode.v26.pc_transcripts.fa
 ~~~
 
@@ -34,7 +36,7 @@ gunzip gencode.v26.pc_transcripts.fa.gz
 # tr_prob is probability of choosing a transcript from the 
 # chosen gene, produces gid_tid_subset.txt and
 # trandcript_<percent>.fa
-python generate_transcript_subset.py gid_tid.txt gencode.v26.pc_transcripts.fa <gene_prob> <tran_prob> 
+python generate_transcript_subset.py gid_tid.txt tid.txt transcript_clean.fa <gene_prob> <tran_prob> 
 ~~~
 
 #### RSEM pipeline for generating simulated reads
