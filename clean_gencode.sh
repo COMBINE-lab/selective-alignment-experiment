@@ -1,7 +1,7 @@
 #!/bin/bash
 FASTA=$1
 DIR="$( dirname -- "$1"  )"
-OUT="$DIR/transcript_clean.fasta"
+OUT="$DIR/transcript_clean.fa"
 TID="$DIR/tid.txt"
 
 #DIR="$(dirname -- "$(realpath -- "$1")")"
