@@ -1,0 +1,20 @@
+{
+    "60 percent" : 
+    {
+        "truth" : "60percent/truth.tsv",
+        "hera" : "60percent/Hera-1.2/quant/abundance.tsv",
+        "kallisto" : "60percent/Kallisto0.43/quant/abundance.tsv",
+        "star" : "60percent/star/quant/quant.sf",
+        "selaln" : "60percent/Salmon-SLA09/quant/quant.sf",
+        "bowtie2" : "60percent/bowtie2/quant/quant.sf"
+    },
+    "30 percent" : 
+    {
+        "truth" : "30percent/truth.tsv",
+        "hera" : "30percent/Hera-1.2/quant/abundance.tsv",
+        "kallisto" : "30percent/Kallisto0.43/quant/abundance.tsv",
+        "star" : "30percent/star/quant/quant.sf",
+        "selaln" : "30percent/Salmon-SLA09/quant/quant.sf",
+        "bowtie2" : "30percent/bowtie2/quant/quant.sf"
+    }
+}
