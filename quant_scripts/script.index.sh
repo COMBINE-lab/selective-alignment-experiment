@@ -33,10 +33,10 @@ done
 
 
 ### ref files
-ref_directory="../Indices/HomoSapiens.38.80/"
-txpfasta="Homo_sapiens.GRCh38.80.fa"
-genefasta="Homo_sapiens.GRCh38.dna.primary_assembly.fa"
-gtf="Homo_sapiens.GRCh38.80.gtf"
+ref_directory="./"
+txpfasta="hera1.2.noGRCh38.index/transcripts.fasta"
+genefasta="GRCh38.p10.genome.fa"
+gtf="gencode.v27.annotation.gtf"
 
 
 ### binaries
