@@ -2,23 +2,12 @@
 
 ### sample
 sample=""
+noSensitive=""
 
-while getopts "khlsbp:" opt; do
+while getopts "np:" opt; do
     case "$opt" in
-	k)
-            runKallisto=1
-            ;;
-        h)
-            runHera=1
-            ;; 
-	l)
-	    runSLA=1
-	    ;;
-        s)
-            runStar=1
-            ;;
-        b)
-            runBowtie2=1
+        n)
+            noSensitive=1
             ;;
         p)
             sample=$OPTARG
@@ -35,6 +24,10 @@ starAlignResults="result.star"
 starQuantResults="result.star.quant"
 bowtie2AlignResults="result.bowtie2"
 bowtie2QuantResults="result.bowtie2.quant"
+if [ $noSensitive == 1 ]
+then
+bowtie2QuantResults="result.bowtie2.noSensitive.quant"
+fi
 
 truth="truth.tsv"
 truthIndex="transcript_id"

@@ -5,7 +5,7 @@ runHera=0
 runSLA=0
 runStar=0
 runBowtie2=0
-
+runBowtie2noSensitive=0
 
 #sample
 sample=""
@@ -14,7 +14,7 @@ readPair2=""
 
 readTyp=""
 
-while getopts "khlsbp:1:2:r:" opt; do
+while getopts "khlsbnp:1:2:r:" opt; do
     case "$opt" in
 	k)
             runKallisto=1
@@ -30,7 +30,10 @@ while getopts "khlsbp:1:2:r:" opt; do
             ;;
         b)
             runBowtie2=1
-            ;;       
+            ;;
+	n)
+	    runBowtie2noSensitive=1
+	    ;;       
 	r)
             readType=$OPTARG
             ;;
@@ -81,6 +84,9 @@ starAlignResults="result.star"
 starQuantResults="result.star.quant"
 bowtie2AlignResults="result.bowtie2"
 bowtie2QuantResults="result.bowtie2.quant"
+bowtie2NoSensitiveAlignResults="result.bowtie2.noSensitive"
+bowtie2NoSensitiveQuantResults="result.bowtie2.noSensitive.quant"
+
 
 #kallisto
 if [ $runKallisto == 1 ]
@@ -128,6 +134,19 @@ then
 	eval $cmd
 
 	cmd="/usr/bin/time -o \"${sample}\"/quant.bowtie2.time  \"${salmonBinary}\" quant -t \"${ref_directory}\"/\"${txpfasta}\"  -la -a \"${sample}\"/\"${bowtie2AlignResults}\"/Aligned.out.bam  -o \"${sample}\"/\"${bowtie2QuantResults}\" -p 16  --useErrorModel --rangeFactorizationBins 4"
+	echo $cmd
+	eval $cmd
+fi
+
+#bowtie2-noSensitive
+if [ $runBowtie2noSensitive == 1 ]
+then
+	eval "mkdir \"${sample}\"/\"${bowtie2NoSensitiveAlignResults}\""
+	cmd="/usr/bin/time -o \"${sample}\"/map.bowtie2.time \"${bowtie2Binary}\"  -${readType} --phred33 --dpad 0 --gbar 99999999 --mp 1,1 --np 1 --score-min L,0,-0.2 -I 1 -X 1000 --no-mixed --no-discordant -p 16 -k 200 -x \"${bowtie2Index}\"/index -1 \"${sample}\"/\"${readPair1}\" -2 \"${sample}\"/\"${readPair2}\" | samtools view -S -b -o \"${sample}\"/\"${bowtie2NoSensitiveAlignResults}\"/Aligned.out.bam -"
+	echo $cmd
+	eval $cmd
+
+	cmd="/usr/bin/time -o \"${sample}\"/quant.bowtie2.time  \"${salmonBinary}\" quant -t \"${ref_directory}\"/\"${txpfasta}\"  -la -a \"${sample}\"/\"${bowtie2NoSensitiveAlignResults}\"/Aligned.out.bam  -o \"${sample}\"/\"${bowtie2NoSensitiveQuantResults}\" -p 16  --useErrorModel --rangeFactorizationBins 4"
 	echo $cmd
 	eval $cmd
 fi
