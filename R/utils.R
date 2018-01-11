@@ -24,14 +24,14 @@ merge_tables_no_truth <- function(dlist) {
   merged
 }
 
-merge_tables <- function(dlist, truth=NULL) {
+merge_tables <- function(dlist, truth=NULL, how_join="outer") {
   if (is.null(truth)) {
     merge_tables_no_truth(dlist)
   } else {
     m <- truth
     for (idx in seq_along(dlist)) {
       merged1 <- label_cols(dlist[[idx]], names(dlist)[idx])
-      m <- merge(m, merged1, by="Name", how="outer", all=TRUE)#, suffixes=c("", paste0(".",name)))
+      m <- merge(m, merged1, by="Name", how=how_join, all=TRUE)#, suffixes=c("", paste0(".",name)))
     }
     m[is.na(m)] <- 0.0
     m

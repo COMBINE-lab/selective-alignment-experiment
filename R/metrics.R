@@ -1,4 +1,4 @@
-rel_diff <- function(df, c1, c2, cutoff=1.0) {
+rel_diff <- function(df, c1, c2, cutoff=0.01) {
   x <- df[[c1]]
   y <- df[[c2]]
   x[x < cutoff] = 0
@@ -8,6 +8,6 @@ rel_diff <- function(df, c1, c2, cutoff=1.0) {
   rd
 }
 
-mard <- function(df, c1, c2, cutoff=1.0) {
-  mean(abs(relDiff(df, c1, c2, cutoff)))
+mard <- function(df, c1, c2, cutoff=0.01) {
+  mean(abs(rel_diff(df, c1, c2, cutoff)))
 }
