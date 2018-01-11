@@ -8,6 +8,6 @@ rel_diff <- function(df, c1, c2, cutoff=0.01) {
   rd
 }
 
-mard <- function(df, c1, c2, cutoff=0.01) {
+mard <- function(df, c1, c2, cutoff=1.0) {
   mean(abs(rel_diff(df, c1, c2, cutoff)))
 }
