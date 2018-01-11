@@ -4,31 +4,31 @@ import sys
 import scipy.stats
 import math
 
-def filterValues(colname, DF, val):
-    DF.loc[DF[colname] < val, colname] = 0.0
+#def filterValues(colname, DF, val):
+#    DF.loc[DF[colname] < val, colname] = 0.0
 
-def relError(c1, c2, DF, cutoff=0.00999999, verbose=False):
-    import pandas as pd
-    import numpy as np
-    nz = DF[DF[c1] > cutoff]
-    re = (nz[c1] - nz[c2]) / nz[c1]
-    return re
+#def relError(c1, c2, DF, cutoff=0.00999999, verbose=False):
+#    import pandas as pd
+#    import numpy as np
+#    nz = DF[DF[c1] > cutoff]
+#    re = (nz[c1] - nz[c2]) / nz[c1]
+#    return re
 
-def proportionalityCorrelation(c1, c2, DF, offset=0.01):
-    import numpy as np
-    return (2.0 * np.log(DF[c1] + offset).cov(np.log(DF[c2] + offset))) / (np.log(DF[c1] + offset).var() + np.log(DF[c2] + offset).var())
+#def proportionalityCorrelation(c1, c2, DF, offset=0.01):
+#    import numpy as np
+#    return (2.0 * np.log(DF[c1] + offset).cov(np.log(DF[c2] + offset))) / (np.log(DF[c1] + offset).var() + np.log(DF[c2] + offset).var())
 
-def relDiffTP(c1, c2, DF, cutoff=0.1):
-    import pandas as pd
-    import numpy as np
-    tpindex = DF[DF[c1] > cutoff]
-    rd = (tpindex[c2] - tpindex[c1]) / tpindex[c1] 
-    return rd
+#def relDiffTP(c1, c2, DF, cutoff=0.1):
+#    import pandas as pd
+#    import numpy as np
+#    tpindex = DF[DF[c1] > cutoff]
+#    rd = (tpindex[c2] - tpindex[c1]) / tpindex[c1] 
+#    return rd
 
-def getMedian(df): return df.median()
-def getMean(df): return df.median()
+#def getMedian(df): return df.median()
+#def getMean(df): return df.median()
 
-def relDiff(c1, c2, DF, cutoff=0.01, verbose=False):
+def relDiff(c1, c2, DF, cutoff, verbose=False):
     import pandas as pd
     """
     Computes the relative difference between the values
@@ -48,12 +48,14 @@ def relDiff(c1, c2, DF, cutoff=0.01, verbose=False):
     import numpy as np
     rd = pd.DataFrame(data = {"Name" : DF.index, "relDiff" : np.zeros(len(DF.index))*np.nan})
     rd.set_index("Name", inplace=True)
-    bothZero = DF.loc[(DF[c1] < cutoff) & (DF[c2] < cutoff)].index
+    bothZero = DF.loc[(DF[c1] <= cutoff) & (DF[c2] <= cutoff)].index
+    print(len(bothZero))
     nonZero = DF.index.difference(bothZero)
     if (verbose):
         print("Zero occurs in both columns {} times".format(len(rd.loc[bothZero])))
         print("Nonzero occurs in at least 1 column {} times".format(len(rd.loc[nonZero])))
-    allRD = 1.0 * ((DF[c1] - DF[c2]) / (DF[c1] + DF[c2]).abs())
+    allRD = 1.0 * ((DF[c1] - DF[c2]) / (DF[c1] + DF[c2]))
+    print((allRD[bothZero]).head())
     #assert(len(rd.loc[nonZero]["relDiff"]) == len(allRD[nonZero]))
     rd["relDiff"][nonZero] = allRD[nonZero]
     if len(bothZero) > 0:
@@ -62,11 +64,7 @@ def relDiff(c1, c2, DF, cutoff=0.01, verbose=False):
 
 
 
-cutoff = 1
-tpm = 0 #sys.argv[0]
-if(tpm==1):
-	cutoff=0.1
-
+cutoff = 0
 
 def analyze_method(method, address, index_name, count_name,truth_address,truth_index,truth_count):
 	ans = pd.read_table(truth_address,index_col=truth_index)
