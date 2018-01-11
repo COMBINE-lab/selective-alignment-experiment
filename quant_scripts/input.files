@@ -1,0 +1,39 @@
+### references
+# Genome:
+Homo_sapiens.GRCh38.dna.primary_assembly.fa : 78777b0886e8dfa5e14e4957fbbaa53736fcbaa5668d59e09b6b7945fca93d8c
+# GTF:
+Homo_sapiens.GRCh38.80.gtf : 39ecc268c35bbec39a0be8fdaffebad730a06a84125af44c3c8b88470184a76f 
+# Transcriptome:
+Homo_sapiens.GRCh38.80.fa : fffc7029b7006a8509a28e689bb7876d51f24945fedc9532c343fc55637c9a12
+ 
+### samples
+1- rsem simulated bleedthrough samples
+30percent:
+
+60percent:
+
+2- rsem simulated regular sample
+
+3 - polyester simulated sample with different error rates
+0.001:
+
+0.01:
+
+0.02:
+
+0.05:
+
+0.1:
+
+
+4 - expermiental samples
+SRR1215996:
+
+SRR1215997:
+
+SRR1215998:
+
+SRR1215999:
+
+SRR1216000:
+
