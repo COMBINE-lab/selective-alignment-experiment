@@ -1,20 +1,20 @@
 {
     "60 percent" : 
     {
-        "truth" : "60percent/truth.tsv",
-        "hera" : "60percent/Hera-1.2/quant/abundance.tsv",
-        "kallisto" : "60percent/Kallisto0.43/quant/abundance.tsv",
-        "star" : "60percent/star/quant/quant.sf",
-        "selaln" : "60percent/Salmon-SLA09/quant/quant.sf",
-        "bowtie2" : "60percent/bowtie2/quant/quant.sf"
+        "truth" : "~/sa_data/60percent/truth.tsv",
+        "hera" : "~/sa_data/60percent/result.hera1.2/abundance.tsv",
+        "kallisto" : "~/sa_data/60percent/result.kallisto/abundance.tsv",
+        "star" : "~/sa_data/60percent/result.star.quant/quant.sf",
+        "selaln" : "~/sa_data/60percent/result.SLA09/quant.sf",
+        "bowtie2" : "~/sa_data/60percent/result.bowtie2.quant/quant.sf"
     },
     "30 percent" : 
     {
-        "truth" : "30percent/truth.tsv",
-        "hera" : "30percent/Hera-1.2/quant/abundance.tsv",
-        "kallisto" : "30percent/Kallisto0.43/quant/abundance.tsv",
-        "star" : "30percent/star/quant/quant.sf",
-        "selaln" : "30percent/Salmon-SLA09/quant/quant.sf",
-        "bowtie2" : "30percent/bowtie2/quant/quant.sf"
+        "truth" : "~/sa_data/30percent/truth.tsv",
+        "hera" : "~/sa_data/30percent/result.hera1.2/abundance.tsv",
+        "kallisto" : "~/sa_data/30percent/result.kallisto/abundance.tsv",
+        "star" : "~/sa_data/30percent/result.star.quant/quant.sf",
+        "selaln" : "~/sa_data/30percent/result.SLA09/quant.sf",
+        "bowtie2" : "~/sa_data/30percent/result.bowtie2.quant/quant.sf"
     }
 }
