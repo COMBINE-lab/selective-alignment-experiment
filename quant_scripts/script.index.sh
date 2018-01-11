@@ -45,6 +45,7 @@ heraBinary="/home/mohsen/hera-v1.2/build/hera_build"
 slaBinary="/home/mohsen/Salmon_SLA09_SeededAlignment/salmon/build/src/salmon"
 starBinary="/home/mohsen/STAR-2.5.3a/bin/Linux_x86_64/STAR"
 bowtie2Binary="/home/mohsen/bowtie2-2.3.3.1-linux-x86_64/bowtie2-build"
+rsemBinary="/home/mohsen/RSEM-1.3.0/rsem-prepare-reference"
 
 ### outputs
 kallistoIndex="kallisto.index"
