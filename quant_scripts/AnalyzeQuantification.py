@@ -81,9 +81,6 @@ def analyze_method(method, address, index_name, count_name,truth_address,truth_i
 	spearman = scipy.stats.spearmanr(join_table[count_name],join_table['count1']).correlation
 	print ("SPEARMAN:\t",spearman)
 
-
-	print ("\n")
-
 def main():
 	analyze_method(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7])
 

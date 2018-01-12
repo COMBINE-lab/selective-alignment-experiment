@@ -103,7 +103,7 @@ then
 	cmd= mkdir ${outSim}
 	echo $cmd
 	eval $cmd
-	cmd= "Rscript PolyesterSimulation.R ${txpfasta} ${outSim} ${seed} ${baseVectorFile} ${errorRate}"
+	cmd="Rscript PolyesterSimulation.R ${txpfasta} ${outSim} ${seed} ${baseVectorFile} ${errorRate}"
 	echo $cmd
 	eval $cmd
 fi
