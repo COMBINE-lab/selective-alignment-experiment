@@ -6,6 +6,7 @@ runSLA=0
 runStar=0
 runBowtie2=0
 runBowtie2noSensitive=0
+runRsem=0
 
 #sample
 sample=""
@@ -14,7 +15,7 @@ readPair2=""
 
 readTyp=""
 
-while getopts "khlsbnp:1:2:r:" opt; do
+while getopts "khlsbnep:1:2:r:" opt; do
     case "$opt" in
 	k)
             runKallisto=1
@@ -33,6 +34,9 @@ while getopts "khlsbnp:1:2:r:" opt; do
             ;;
 	n)
 	    runBowtie2noSensitive=1
+	    ;;       
+	e)
+	    runRsem=1
 	    ;;       
 	r)
             readType=$OPTARG
@@ -61,6 +65,7 @@ heraIndex="hera1.2.noGRCh38.index"
 slaIndex="SLA09.index"
 starIndex="star.index"
 bowtie2Index="bowtie2.index"
+rsemIndex="rsem.index"
 
 ### binaries
 kallistoBinary="/home/mohsen/kallisto_linux-v0.43.1/kallisto"
@@ -68,7 +73,9 @@ heraBinary="/home/mohsen/hera-v1.2/build/hera"
 slaBinary="/home/mohsen/Salmon_SLA09_SeededAlignment/salmon/build/src/salmon"
 starBinary="/home/mohsen/STAR-2.5.3a/bin/Linux_x86_64/STAR"
 bowtie2Binary="/home/mohsen/bowtie2-2.3.3.1-linux-x86_64/bowtie2"
+bowtie2Path="/home/mohsen/bowtie2-2.3.3.1-linux-x86_64/"
 salmonBinary="/home/mohsen/Salmon-latest_linux_x86_64/bin/salmon"
+rsemBinary="/home/mohsen/RSEM-1.3.0/rsem-calculate-expression"
 
 ### results
 kallistoResults="result.kallisto"
@@ -80,7 +87,7 @@ bowtie2AlignResults="result.bowtie2"
 bowtie2QuantResults="result.bowtie2.quant"
 bowtie2NoSensitiveAlignResults="result.bowtie2.noSensitive"
 bowtie2NoSensitiveQuantResults="result.bowtie2.noSensitive.quant"
-
+rsemResults="result.rsem"
 
 #kallisto
 if [ $runKallisto == 1 ]
@@ -141,6 +148,15 @@ then
 	eval $cmd
 
 	cmd="/usr/bin/time -o \"${sample}\"/quant.bowtie2.time  \"${salmonBinary}\" quant -t \"${ref_directory}\"/\"${txpfasta}\"  -la -a \"${sample}\"/\"${bowtie2NoSensitiveAlignResults}\"/Aligned.out.bam  -o \"${sample}\"/\"${bowtie2NoSensitiveQuantResults}\" -p 16  --useErrorModel --rangeFactorizationBins 4"
+	echo $cmd
+	eval $cmd
+fi
+
+#rsem
+if [ $runRsem == 1 ]
+then
+	eval "mkdir ${sample}/${rsemResults}"
+	cmd="/usr/bin/time -o ${sample}/map.rsem.time ${rsemBinary} -p 16 --paired-end --bowtie2 --bowtie2-path ${bowtie2Path} --no-bam-output ${sample}/${readPair1} ${sample}/${readPair2}  ${rsemIndex}/index ${sample}/${rsemResults}/out"
 	echo $cmd
 	eval $cmd
 fi
