@@ -3,8 +3,8 @@
 ### sample
 sample=""
 noSensitive=0
-
-while getopts "np:" opt; do
+truth=""
+while getopts "np:t:" opt; do
     case "$opt" in
         n)
             noSensitive=1
@@ -12,6 +12,9 @@ while getopts "np:" opt; do
         p)
             sample=$OPTARG
             ;;
+	t)
+	    truth=$OPTARG
+	    ;;
     esac
 done
 
@@ -30,8 +33,8 @@ then
 bowtie2QuantResults="result.bowtie2.noSensitive.quant"
 fi
 
-truth="truth.tsv"
-truth="sim.sim.isoforms.results"
+#truth="truth.tsv"
+#truth="sim.sim.isoforms.results"
 truthIndex="transcript_id"
 truthCount="count"
 

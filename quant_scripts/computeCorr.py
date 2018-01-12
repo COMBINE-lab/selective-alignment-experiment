@@ -55,7 +55,7 @@ def relDiff(c1, c2, DF, cutoff=0.01, verbose=False):
     import numpy as np
     rd = pd.DataFrame(data = {"Name" : DF.index, "relDiff" : np.zeros(len(DF.index))*np.nan})
     rd.set_index("Name", inplace=True)
-    bothZero = DF.loc[(DF[c1] < cutoff) & (DF[c2] < cutoff)].index
+    bothZero = DF.loc[(DF[c1] <= cutoff) & (DF[c2] <= cutoff)].index
     nonZero = DF.index.difference(bothZero)
     if (verbose):
         print("Zero occurs in both columns {} times".format(len(rd.loc[bothZero])))
@@ -69,15 +69,15 @@ def relDiff(c1, c2, DF, cutoff=0.01, verbose=False):
 
 
 
-cutoff = 1
+cutoff = 0.0
 
 method_count = 5 
-
+sample_count = 5.0
 MARDS = [[0 for x in range(method_count)] for y in range(method_count)]
 spearmans = [[0 for x in range(method_count)] for y in range(method_count)]
 
-for i in range(5996,6001) :
-    sample_name = "SRR121" + str(i)
+for i in range(5996,int(5996+sample_count)) :
+    sample_name = "./samples/SRR121" + str(i)
     print (sample_name)
 
     kallisto = pd.read_table(sample_name+"/result.kallisto/abundance.tsv",names=['Name','length','efflength','NumReads','tpm'],index_col="Name",header=1)
@@ -105,12 +105,12 @@ for i in range(5996,6001) :
             spearmans[j][k] += scipy.stats.spearmanr(join['NumReads'],join['NumReads_t']).correlation
 
 for i in range(method_count):
-    MARDS[i] = [ x/5.0 for x in MARDS[i] ]
+    MARDS[i] = [ x/sample_count for x in MARDS[i] ]
 
 np.savetxt("MARDS.txt",MARDS,delimiter='\t', header='kallisto,hera,sla,star,bowtie',newline='\n')
 
 for i in range(method_count):
-    spearmans[i] = [ x/5.0 for x in spearmans[i] ]
+    spearmans[i] = [ x/sample_count for x in spearmans[i] ]
 
 np.savetxt("spearmans.txt",spearmans,delimiter='\t', header='kallisto,hera,sla,star,bowtie',newline='\n')
 

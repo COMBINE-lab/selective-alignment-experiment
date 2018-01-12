@@ -62,10 +62,17 @@ def relDiff(c1, c2, DF, cutoff, verbose=False):
 
 
 
-cutoff = 0
+cutoff = 0.0
 
 def analyze_method(method, address, index_name, count_name,truth_address,truth_index,truth_count):
-	ans = pd.read_table(truth_address,index_col=truth_index)
+	
+	#ans = pd.read_table(truth_address,index_col=truth_index)
+	ans = {} 
+	if "truth.tsv" in truth_address:
+		ans = pd.read_table(truth_address,names=[truth_index,"dupp",truth_count],index_col=truth_index,sep=' ')
+	else:
+		ans = pd.read_table(truth_address,index_col=truth_index)
+
 	#ans.drop_duplicates( keep='first')
 	ans = ans.rename(columns = {truth_count:'count1'})
 	print (method)

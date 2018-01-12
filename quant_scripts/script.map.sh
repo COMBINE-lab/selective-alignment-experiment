@@ -15,7 +15,9 @@ readPair2=""
 
 readTyp=""
 
-while getopts "khlsbnep:1:2:r:" opt; do
+editDistance=4
+
+while getopts "khlsbnep:1:2:r:d:" opt; do
     case "$opt" in
 	k)
             runKallisto=1
@@ -50,6 +52,9 @@ while getopts "khlsbnep:1:2:r:" opt; do
         2)
             readPair2=$OPTARG
             ;;
+	d)
+	    editDistance=$OPTARG
+	    ;;
     esac
 done
 
@@ -108,7 +113,7 @@ fi
 #sla
 if [ $runSLA == 1 ]
 then
-	cmd="/usr/bin/time -o \"${sample}\"/quant.SLA09.time  \"${slaBinary}\"   quant -i \"${slaIndex}\" -la -1 \"${sample}\"/\"${readPair1}\" -2 \"${sample}\"/\"${readPair2}\" -o \"${sample}\"/\"${slaResults}\"  -p 16  --softFilter --editDistance 4 --rangeFactorizationBins 4"
+	cmd="/usr/bin/time -o \"${sample}\"/quant.SLA09.time  \"${slaBinary}\"   quant -i \"${slaIndex}\" -la -1 \"${sample}\"/\"${readPair1}\" -2 \"${sample}\"/\"${readPair2}\" -o \"${sample}\"/\"${slaResults}\"  -p 16  --softFilter --editDistance ${editDistance} --rangeFactorizationBins 4"
 	echo $cmd
 	eval $cmd
 fi
@@ -143,7 +148,7 @@ fi
 if [ $runBowtie2noSensitive == 1 ]
 then
 	eval "mkdir \"${sample}\"/\"${bowtie2NoSensitiveAlignResults}\""
-	cmd="/usr/bin/time -o \"${sample}\"/map.bowtie2.time \"${bowtie2Binary}\"  -${readType} --phred33 --dpad 0 --gbar 99999999 --mp 1,1 --np 1 --score-min L,0,-0.2 -I 1 -X 1000 --no-mixed --no-discordant -p 16 -k 200 -x \"${bowtie2Index}\"/index -1 \"${sample}\"/\"${readPair1}\" -2 \"${sample}\"/\"${readPair2}\" | samtools view -S -b -o \"${sample}\"/\"${bowtie2NoSensitiveAlignResults}\"/Aligned.out.bam -"
+	cmd="/usr/bin/time -o \"${sample}\"/map.bowtie2.time \"${bowtie2Binary}\"  -${readType} --phred33 --dpad 0 --gbar 99999999 --mp 1,1 --np 1 --score-min L,0,-0.1 -I 1 -X 1000 --no-mixed --no-discordant -p 16 -k 200 -x \"${bowtie2Index}\"/index -1 \"${sample}\"/\"${readPair1}\" -2 \"${sample}\"/\"${readPair2}\" | samtools view -S -b -o \"${sample}\"/\"${bowtie2NoSensitiveAlignResults}\"/Aligned.out.bam -"
 	echo $cmd
 	eval $cmd
 
