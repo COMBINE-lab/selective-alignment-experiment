@@ -70,7 +70,7 @@ rsemIndex="rsem.index"
 ### binaries
 kallistoBinary="/home/mohsen/kallisto_linux-v0.43.1/kallisto"
 heraBinary="/home/mohsen/hera-v1.2/build/hera"
-slaBinary="/home/mohsen/Salmon_SLA09_SeededAlignment/salmon/build/src/salmon"
+slaBinary="/home/mohsen/Salmon09-SelectiveAlignment/salmon/bin/salmon"
 starBinary="/home/mohsen/STAR-2.5.3a/bin/Linux_x86_64/STAR"
 bowtie2Binary="/home/mohsen/bowtie2-2.3.3.1-linux-x86_64/bowtie2"
 bowtie2Path="/home/mohsen/bowtie2-2.3.3.1-linux-x86_64/"

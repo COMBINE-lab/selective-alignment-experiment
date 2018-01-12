@@ -2,7 +2,7 @@
 
 ### sample
 sample=""
-noSensitive=""
+noSensitive=0
 
 while getopts "np:" opt; do
     case "$opt" in
@@ -24,12 +24,14 @@ starAlignResults="result.star"
 starQuantResults="result.star.quant"
 bowtie2AlignResults="result.bowtie2"
 bowtie2QuantResults="result.bowtie2.quant"
+
 if [ $noSensitive == 1 ]
 then
 bowtie2QuantResults="result.bowtie2.noSensitive.quant"
 fi
 
 truth="truth.tsv"
+truth="sim.sim.isoforms.results"
 truthIndex="transcript_id"
 truthCount="count"
 
@@ -39,7 +41,7 @@ eval $cmd
 
 #hera1.2
 eval "sed -i 's/\#//g' ${sample}/${heraResults}/abundance.tsv" 
-eval "sed -i 's/\:ENSG[0-9]*//g' ${sample}/${heraResults}/abundance.tsv"
+#eval "sed -i 's/\:ENSG[0-9]*//g' ${sample}/${heraResults}/abundance.tsv"
 cmd="python AnalyzeQuantification.py hera1.2 ${sample}/${heraResults}/abundance.tsv target_id est_counts ${sample}/${truth} ${truthIndex} ${truthCount}"
 eval $cmd
 

@@ -49,13 +49,11 @@ def relDiff(c1, c2, DF, cutoff, verbose=False):
     rd = pd.DataFrame(data = {"Name" : DF.index, "relDiff" : np.zeros(len(DF.index))*np.nan})
     rd.set_index("Name", inplace=True)
     bothZero = DF.loc[(DF[c1] <= cutoff) & (DF[c2] <= cutoff)].index
-    print(len(bothZero))
     nonZero = DF.index.difference(bothZero)
     if (verbose):
         print("Zero occurs in both columns {} times".format(len(rd.loc[bothZero])))
         print("Nonzero occurs in at least 1 column {} times".format(len(rd.loc[nonZero])))
     allRD = 1.0 * ((DF[c1] - DF[c2]) / (DF[c1] + DF[c2]))
-    print((allRD[bothZero]).head())
     #assert(len(rd.loc[nonZero]["relDiff"]) == len(allRD[nonZero]))
     rd["relDiff"][nonZero] = allRD[nonZero]
     if len(bothZero) > 0:
