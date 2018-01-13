@@ -65,14 +65,6 @@ bowtie2Index="bowtie2.index"
 rsemIndex="rsem.index"
 
 
-#kallisto0.43 index
-if [ $runKallisto == 1 ]
-then
-	cmd="/usr/bin/time -o index.kallisto.time.${kmer} \"${kallistoBinary}\"  index -i \"${kallistoIndex}\" -k ${kmer} \"${ref_directory}\"/\"${txpfasta}\""
-	echo $cmd
-	eval $cmd
-fi
-
 #hera1.2 index
 if [ $runHera == 1 ]
 then
@@ -89,6 +81,14 @@ then
 	eval $cmd
 fi
 
+
+#kallisto0.43 index
+if [ $runKallisto == 1 ]
+then
+	cmd="/usr/bin/time -o index.kallisto.time.${kmer} \"${kallistoBinary}\"  index -i \"${kallistoIndex}\" -k ${kmer} \"${ref_directory}\"/\"${txpfasta}\""
+	echo $cmd
+	eval $cmd
+fi
 
 #sla09 index
 if [ $runSLA == 1 ]
