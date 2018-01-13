@@ -23,13 +23,15 @@ for g,tlist in gid_tid.iteritems():
     if len(tlist) > 1:
         for t in tlist:
             background.append(t)
+print len(background)
 
 import random
+import tqdm
 tokeep = []
 groundset = []
 gene_prob = float(gene_prob)/100
 tr_prob = float(tr_prob)/100
-for g,tlist in gid_tid.iteritems():
+for g,tlist in tqdm.tqdm(gid_tid.iteritems()):
     if len(tlist) > 1:
         if(random.random() <= gene_prob):
             for t in tlist:
@@ -39,7 +41,7 @@ for g,tlist in gid_tid.iteritems():
 
 print len(tokeep)
 subset_transcriptome_file = os.path.join(os.path.dirname(transcriptome_file),"transcriptome_"+str(int(total_prob/100))+".fa")
-subset_gid_tid_file = os.path.join(os.path.dirname(gid_tid_file),"gid_tid_subset.txt")
+subset_gid_tid_file = os.path.join(os.path.dirname(gid_tid_file),"gid_tid_"+str(int(total_prob/100))+".txt")
 
 df3 = df2.loc[df2['tid'].isin(tokeep)]
 df3.to_csv(subset_gid_tid_file,sep="\t",header=False,index=False)
