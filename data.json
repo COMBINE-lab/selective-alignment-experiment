@@ -1,0 +1,20 @@
+{
+    "60 percent" : 
+    {
+        "truth" : "~/sa_data/60percent/truth.tsv",
+        "hera" : "~/sa_data/60percent/result.hera1.2/abundance.tsv",
+        "kallisto" : "~/sa_data/60percent/result.kallisto/abundance.tsv",
+        "star" : "~/sa_data/60percent/result.star.quant/quant.sf",
+        "selaln" : "~/sa_data/60percent/result.SLA09/quant.sf",
+        "bowtie2" : "~/sa_data/60percent/result.bowtie2.quant/quant.sf"
+    },
+    "30 percent" : 
+    {
+        "truth" : "~/sa_data/30percent/truth.tsv",
+        "hera" : "~/sa_data/30percent/result.hera1.2/abundance.tsv",
+        "kallisto" : "~/sa_data/30percent/result.kallisto/abundance.tsv",
+        "star" : "~/sa_data/30percent/result.star.quant/quant.sf",
+        "selaln" : "~/sa_data/30percent/result.SLA09/quant.sf",
+        "bowtie2" : "~/sa_data/30percent/result.bowtie2.quant/quant.sf"
+    }
+}

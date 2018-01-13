@@ -1,0 +1,54 @@
+### references
+# Genome:
+Homo_sapiens.GRCh38.dna.primary_assembly.fa : 78777b0886e8dfa5e14e4957fbbaa53736fcbaa5668d59e09b6b7945fca93d8c
+# GTF:
+Homo_sapiens.GRCh38.80.gtf : 39ecc268c35bbec39a0be8fdaffebad730a06a84125af44c3c8b88470184a76f 
+# Transcriptome:
+Homo_sapiens.GRCh38.80.fa : fffc7029b7006a8509a28e689bb7876d51f24945fedc9532c343fc55637c9a12
+ 
+### samples
+## rsem simulated bleedthrough samples
+# 30percent:
+sim_1.fq : 250d557b052702f0ce5d2dcbccc63739246f1c72d2ad254582c575acb9369512
+sim_2.fq : 909fe87cd6709e87ab06c7db81905917c0aa4a116d2a5296902c94092d86fa94
+# 60percent:
+sim_1.fq : aa313f0cf0df9a17089b064dbaa705f4374d3d0f2518653e85cdef41434bd15a
+sim_2.fq : 96dee15ae5b337c922d38bc0c67ab5f2f0b559dc71a505fecd8a732ab4964c87
+
+## rsem simulated regular sample
+sim2_1.fq : 5a5430b7908cb228bbf4a5f6fad8a149d97f8e696f0ab95b2f722b1a1bde4fb3
+sim2_2.fq : 1c7d5f330395a0184984de486503d866a0f77cf388a2741c43ce514b226a49eb
+## polyester simulated sample with different error rates
+#0.001
+sample_01_1_shuffled.fa : 5f8ccc4660b46c9c982eb819a03577ada969b686ec5697dec0abcb0db368dba7
+sample_01_2_shuffled.fa : ad194b3743e530d8daedfd0b1d03a6a6b00fcce3014d6b18d852e6e0d800f6af
+#0.01
+sample_01_1_shuffled.fa : 5a8666d5ef90f1dcfadf377821db7a965361cb1789501ed30a52e4a517231618
+sample_01_2_shuffled.fa : 0453415288a31c89ee6429dff7053389a5c8a8eaad1942aa9e6ccb17a76d1252
+#0.02
+sample_01_1_shuffled.fa : 04a85d34ceab51a9057f934cfe8b8996bae03603cf15fa250d9ab8cd5937cc4f
+sample_01_2_shuffled.fa : ad4fb0f8f7a84be42cf0908362e2cac1b51a83a07324157d5140f6f9efa1eb02
+#0.05
+sample_01_1_shuffled.fa : 6caf59cb280fcae6b45a67a7050a90bc1147636baa05c0c1f335c09131ed8ac1
+sample_01_2_shuffled.fa : 9bf9dda89dd6aee0aafae059e04b5b36bfdd0b2cde28d37905e317daf98eb1ec
+#0.1
+sample_01_1_shuffled.fa : af31898bbb9e146c1062c55b03585bc20c9386cc20d08ccd19ee0022fe12893e
+sample_01_2_shuffled.fa : 4e3483a7030a4491c7374cdeec4db144d441a4d7d6e8828d2f77bcd4fd09b81c
+
+## expermiental samples
+# SRR1215996
+sim_1.fastq : dc856db49c2f703eb5f41ce4282f9da0a78ad067b95202bddf3a0bef55db6a16
+sim_2.fastq : 73fddca0feaa8864aa7d87ec9bf5baed5624489fe15c001358e671edf33f05c6
+# SRR1215997
+sim_1.fastq : 3fb416ddf15d66a6c80fb20e1809a81b4f27a44cf568172a377df63582d1ab3b
+sim_2.fastq : 7118beaf6f7fc8697c3a3db329154612a5016c83d0d9ce3d05caae0885cb1ad6
+# SRR1215998
+sim_1.fastq : ccbaa94b5e89cd794cfd42ddeb5a5ab5b8d86dacd8ae4843e9c8c24caea1d67c
+sim_2.fastq : f22a331b18699cbf4ac4cde5e1a2388f4fa5b4e733292df1306b4397eb456b4d
+# SRR1215999
+sim_1.fastq : 400dc6a0c518753af1c0c26513ec3827112f9052103b54b991b91f26138208cc
+sim_2.fastq : b6d3932edf2a18c4c0106f96a299d72b102b37b6859c4b80b163dbe3898bb56d
+# SRR1216000
+sim_1.fastq : f9fe3a17366f193c3f8fa28983be60a24d04a43764361195b39e09003642a8e7
+sim_2.fastq : ecf6d4da027f5cd0af208e13e8c07ec6ae2f4bc79c1065249478b6a9e55708fc
+

@@ -1,0 +1,18 @@
+### references
+# Genome:
+wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_27/gencode.v27.annotation.gtf.gz
+gunzip gencode.v27.annotation.gtf.gz
+# GTF:
+wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_26/GRCh38.p10.genome.fa.gz
+gunzip GRCh38.p10.genome.fa.gz
+
+# Experimental reads
+wget ftp.sra.ebi.ac.uk/vol1/fastq/SRR121/006/SRR1215996/SRR1215996_2.fastq.gz
+wget ftp.sra.ebi.ac.uk/vol1/fastq/SRR121/007/SRR1215997/SRR1215997_1.fastq.gz 
+wget ftp.sra.ebi.ac.uk/vol1/fastq/SRR121/007/SRR1215997/SRR1215997_2.fastq.gz
+wget ftp.sra.ebi.ac.uk/vol1/fastq/SRR121/008/SRR1215998/SRR1215998_1.fastq.gz        
+wget ftp.sra.ebi.ac.uk/vol1/fastq/SRR121/008/SRR1215998/SRR1215998_2.fastq.gz             i
+wget ftp.sra.ebi.ac.uk/vol1/fastq/SRR121/009/SRR1215999/SRR1215999_1.fastq.gz
+wget ftp.sra.ebi.ac.uk/vol1/fastq/SRR121/009/SRR1215999/SRR1215999_2.fastq.gz
+wget ftp.sra.ebi.ac.uk/vol1/fastq/SRR121/000/SRR1216000/SRR1216000_1.fastq.gz            
+wget ftp.sra.ebi.ac.uk/vol1/fastq/SRR121/000/SRR1216000/SRR1216000_2.fastq.gz
