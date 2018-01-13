@@ -11,18 +11,18 @@ This script can be used to generate simulated paired end reads with either rsem-
 ./script.simulations.sh -e -p [input sample directory] -1 [input reads1 fileName] -2 [input reads2 fileName] -c [read count] -n [background noise] -o [output directory] -s [seed] 
 ~~~
 ## Options
-1- The sample with which the rsem model will be built
+1- The sample with which the rsem model will be built <br/ >
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -p [sample directory] <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -1 [input sample reads1 fileName] <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -2 [input sample reads2 fileName] <br />
-2- Number of reads that rsem shoul generate <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -c [read count] (default value = 30000000) <br />
-3- The precentage of reads that don't come from the input transcriptome  <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -n [background noise] (default value = 0.05)  <br />
+2- Number of reads that rsem shoul generate (default value = 30000000) <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -c [read count]  <br />
+3- The precentage of reads that don't come from the input transcriptome  (default value = 0.05)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -n [background noise]   <br />
 4- The directory where the simulated sample reads and truth file will be written at <br />
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o [output direcotry] <br />
-5- The random number required for beginning simulation <br />
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -s [seed] (default value = 0)
+5- The random number required for beginning simulation (default value = 0)<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -s [seed] 
 
 ## Example
 ~~~shell
