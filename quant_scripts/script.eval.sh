@@ -4,7 +4,10 @@
 sample=""
 noSensitive=0
 truth=""
-while getopts "np:t:" opt; do
+kmer=25
+noSensitive=0
+
+while getopts "np:t:m:" opt; do
     case "$opt" in
         n)
             noSensitive=1
@@ -15,18 +18,22 @@ while getopts "np:t:" opt; do
 	t)
 	    truth=$OPTARG
 	    ;;
+	m)
+	    kmer=$OPTARG
+	    ;;
     esac
 done
 
 
 ### results
-kallistoResults="result.kallisto"
+kallistoResults="result.kallisto.k${kmer}"
 heraResults="result.hera1.2"
-slaResults="result.SLA09"
+slaResults="result.SLA09.k${kmer}"
 starAlignResults="result.star"
 starQuantResults="result.star.quant"
 bowtie2AlignResults="result.bowtie2"
 bowtie2QuantResults="result.bowtie2.quant"
+#bowtie2noSensitiveQuantResults="result.bowtie2.noSensitive.quant"
 
 if [ $noSensitive == 1 ]
 then

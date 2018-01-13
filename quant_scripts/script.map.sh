@@ -16,8 +16,9 @@ readPair2=""
 readTyp=""
 
 editDistance=4
+kmer=25
 
-while getopts "khlsbnep:1:2:r:d:" opt; do
+while getopts "khlsbnep:1:2:r:d:m:" opt; do
     case "$opt" in
 	k)
             runKallisto=1
@@ -55,6 +56,9 @@ while getopts "khlsbnep:1:2:r:d:" opt; do
 	d)
 	    editDistance=$OPTARG
 	    ;;
+	m)
+	    kmer=$OPTARG
+	    ;;
     esac
 done
 
@@ -65,9 +69,9 @@ genefasta="GRCh38.p10.genome.fa"
 gtf="gencode.v27.annotation.gtf"
 
 ### indices
-kallistoIndex="kallisto.index"
+kallistoIndex="kallisto.index.${kmer}"
 heraIndex="hera1.2.noGRCh38.index"
-slaIndex="SLA09.index"
+slaIndex="SLA09.index.${kmer}"
 starIndex="star.index"
 bowtie2Index="bowtie2.index"
 rsemIndex="rsem.index"
@@ -83,9 +87,9 @@ salmonBinary="/home/mohsen/Salmon-latest_linux_x86_64/bin/salmon"
 rsemBinary="/home/mohsen/RSEM-1.3.0/rsem-calculate-expression"
 
 ### results
-kallistoResults="result.kallisto"
+kallistoResults="result.kallisto.k${kmer}"
 heraResults="result.hera1.2"
-slaResults="result.SLA09"
+slaResults="result.SLA09.k${kmer}"
 starAlignResults="result.star"
 starQuantResults="result.star.quant"
 bowtie2AlignResults="result.bowtie2"
@@ -97,7 +101,7 @@ rsemResults="result.rsem"
 #kallisto
 if [ $runKallisto == 1 ]
 then
-	cmd="/usr/bin/time -o \"${sample}\"/quant.kallisto.time \"${kallistoBinary}\"  quant -i \"${kallistoIndex}\"  -o \"${sample}\"/\"${kallistoResults}\" -t 16  \"${sample}\"/\"${readPair1}\" \"${sample}\"/\"${readPair2}\""
+	cmd="/usr/bin/time -o \"${sample}\"/quant.kallisto.time.k${kmer} \"${kallistoBinary}\"  quant -i \"${kallistoIndex}\"  -o \"${sample}\"/\"${kallistoResults}\" -t 16  \"${sample}\"/\"${readPair1}\" \"${sample}\"/\"${readPair2}\""
 	echo $cmd
 	eval $cmd
 fi
@@ -113,7 +117,7 @@ fi
 #sla
 if [ $runSLA == 1 ]
 then
-	cmd="/usr/bin/time -o \"${sample}\"/quant.SLA09.time  \"${slaBinary}\"   quant -i \"${slaIndex}\" -la -1 \"${sample}\"/\"${readPair1}\" -2 \"${sample}\"/\"${readPair2}\" -o \"${sample}\"/\"${slaResults}\"  -p 16  --softFilter --editDistance ${editDistance} --rangeFactorizationBins 4"
+	cmd="/usr/bin/time -o \"${sample}\"/quant.SLA09.time.k${kmer}  \"${slaBinary}\"   quant -i \"${slaIndex}\" -la -1 \"${sample}\"/\"${readPair1}\" -2 \"${sample}\"/\"${readPair2}\" -o \"${sample}\"/\"${slaResults}\"  -p 16  --softFilter --editDistance ${editDistance} --rangeFactorizationBins 4"
 	echo $cmd
 	eval $cmd
 fi

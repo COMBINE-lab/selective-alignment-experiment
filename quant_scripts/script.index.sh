@@ -8,8 +8,9 @@ runSLA=0
 runStar=0
 runBowtie2=0
 runRsem=0
+kmer=0
 
-while getopts "khlsbge" opt; do
+while getopts "khlsbgem:" opt; do
     case "$opt" in
         k)
             runKallisto=1
@@ -32,6 +33,8 @@ while getopts "khlsbge" opt; do
         e)
             runRsem=1
             ;;
+	m)
+	    kmer=$OPTARG
     esac
 done
 
@@ -53,18 +56,19 @@ bowtie2Path="/home/mohsen/bowtie2-2.3.3.1-linux-x86_64/"
 rsemBinary="/home/mohsen/RSEM-1.3.0/rsem-prepare-reference"
 
 ### outputs
-kallistoIndex="kallisto.index"
+kallistoIndex="kallisto.index.${kmer}"
 heraIndex="hera1.2.index"
 heraIndexNoGRCH="hera1.2.noGRCh38.index"
-slaIndex="SLA09.index"
+slaIndex="SLA09.index.${kmer}"
 starIndex="star.index"
 bowtie2Index="bowtie2.index"
 rsemIndex="rsem.index"
 
+
 #kallisto0.43 index
 if [ $runKallisto == 1 ]
 then
-	cmd="/usr/bin/time -o index.kallisto.time \"${kallistoBinary}\"  index -i \"${kallistoIndex}\" -k 25 \"${ref_directory}\"/\"${txpfasta}\""
+	cmd="/usr/bin/time -o index.kallisto.time.${kmer} \"${kallistoBinary}\"  index -i \"${kallistoIndex}\" -k ${kmer} \"${ref_directory}\"/\"${txpfasta}\""
 	echo $cmd
 	eval $cmd
 fi
@@ -89,7 +93,7 @@ fi
 #sla09 index
 if [ $runSLA == 1 ]
 then
-	cmd="/usr/bin/time -o index.SLA09.time \"${slaBinary}\"  index -t \"${ref_directory}\"/\"${txpfasta}\" -i \"${slaIndex}\" -k 25 -p 16"
+	cmd="/usr/bin/time -o index.SLA09.time.${kmer} \"${slaBinary}\"  index -t \"${ref_directory}\"/\"${txpfasta}\" -i \"${slaIndex}\" -k ${kmer} -p 16"
 	echo $cmd
 	eval $cmd
 fi
