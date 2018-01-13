@@ -4,30 +4,6 @@ import sys
 import scipy.stats
 import math
 
-#def filterValues(colname, DF, val):
-#    DF.loc[DF[colname] < val, colname] = 0.0
-
-#def relError(c1, c2, DF, cutoff=0.00999999, verbose=False):
-#    import pandas as pd
-#    import numpy as np
-#    nz = DF[DF[c1] > cutoff]
-#    re = (nz[c1] - nz[c2]) / nz[c1]
-#    return re
-
-#def proportionalityCorrelation(c1, c2, DF, offset=0.01):
-#    import numpy as np
-#    return (2.0 * np.log(DF[c1] + offset).cov(np.log(DF[c2] + offset))) / (np.log(DF[c1] + offset).var() + np.log(DF[c2] + offset).var())
-
-#def relDiffTP(c1, c2, DF, cutoff=0.1):
-#    import pandas as pd
-#    import numpy as np
-#    tpindex = DF[DF[c1] > cutoff]
-#    rd = (tpindex[c2] - tpindex[c1]) / tpindex[c1] 
-#    return rd
-
-#def getMedian(df): return df.median()
-#def getMean(df): return df.median()
-
 def relDiff(c1, c2, DF, cutoff, verbose=False):
     import pandas as pd
     """
@@ -62,7 +38,6 @@ def relDiff(c1, c2, DF, cutoff, verbose=False):
 
 
 
-cutoff = 0.0
 
 def analyze_method(method, address, index_name, count_name,truth_address,truth_index,truth_count):
 	
@@ -88,6 +63,7 @@ def analyze_method(method, address, index_name, count_name,truth_address,truth_i
 	spearman = scipy.stats.spearmanr(join_table[count_name],join_table['count1']).correlation
 	print ("SPEARMAN:\t",spearman)
 
+cutoff = 0.0
 def main():
 	analyze_method(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],sys.argv[5],sys.argv[6],sys.argv[7])
 

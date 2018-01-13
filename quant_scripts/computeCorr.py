@@ -11,30 +11,6 @@ import math
 import seaborn as sns
 #from sets import Set
 
-def filterValues(colname, DF, val):
-    DF.loc[DF[colname] < val, colname] = 0.0
-
-def relError(c1, c2, DF, cutoff=0.00999999, verbose=False):
-    import pandas as pd
-    import numpy as np
-    nz = DF[DF[c1] > cutoff]
-    re = (nz[c1] - nz[c2]) / nz[c1]
-    return re
-
-def proportionalityCorrelation(c1, c2, DF, offset=0.01):
-    import numpy as np
-    return (2.0 * np.log(DF[c1] + offset).cov(np.log(DF[c2] + offset))) / (np.log(DF[c1] + offset).var() + np.log(DF[c2] + offset).var())
-
-def relDiffTP(c1, c2, DF, cutoff=0.1):
-    import pandas as pd
-    import numpy as np
-    tpindex = DF[DF[c1] > cutoff]
-    rd = (tpindex[c2] - tpindex[c1]) / tpindex[c1]
-    return rd
-
-def getMedian(df): return df.mean()
-def getMean(df): return df.mean()
-
 def relDiff(c1, c2, DF, cutoff=0.01, verbose=False):
     import pandas as pd
     """
@@ -80,9 +56,9 @@ for i in range(5996,int(5996+sample_count)) :
     sample_name = "./samples/SRR121" + str(i)
     print (sample_name)
 
-    kallisto = pd.read_table(sample_name+"/result.kallisto/abundance.tsv",names=['Name','length','efflength','NumReads','tpm'],index_col="Name",header=1)
+    kallisto = pd.read_table(sample_name+"/result.kallisto.k25/abundance.tsv",names=['Name','length','efflength','NumReads','tpm'],index_col="Name",header=1)
     hera = pd.read_table(sample_name+"/result.hera1.2/abundance.tsv",names=["Name","uMap",'length','efflength',"NumReads","tpm"],index_col="Name",header=1)
-    sla = pd.read_table(sample_name+"/result.SLA09/quant.sf",index_col="Name")
+    sla = pd.read_table(sample_name+"/result.SLA09.k25/quant.sf",index_col="Name")
     star = pd.read_table(sample_name+"/result.star.quant/quant.sf",index_col="Name")
     bowtie = pd.read_table(sample_name+"/result.bowtie2.quant/quant.sf",index_col="Name")
 
