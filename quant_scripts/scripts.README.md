@@ -57,7 +57,7 @@ Quantification results for all methods [kallisto, hera, selective alignment, sta
 ## how to run
 ./script.eval.sh -p [sample directory] -t [truth fileName] ...
 
-# required options
+## required options
 1- sample to evaluate
 	-p [sample directory] : where the quantification results and truth file are located
 2- truth file
