@@ -1,10 +1,42 @@
+# script.simulations.sh
+
+This script can be used to generate simulated paired end reads with either rsem-simulate-reads simulator or polyester from human transcripts obtained at: <br />
+~~~shell
+        wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_27/gencode.v27.annotation.gtf.gz
+        wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_26/GRCh38.p10.genome.fa.gz
+~~~
+
+## Generating samples with RSEM
+~~~shell
+./script.simulations.sh -e -p [input sample directory] -1 [input reads1 fileName] -2 [input reads2 fileName] -c [read count] -n [background noise] -o [output directory] -s [seed] 
+~~~
+## Options
+1- The sample with which the rsem model will be built
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -p [sample directory] <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -1 [input sample reads1 fileName] <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -2 [input sample reads2 fileName] <br />
+2- Number of reads that rsem shoul generate <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -c [read count] (default value = 30000000) <br />
+3- The precentage of reads that don't come from the input transcriptome  <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -n [background noise] (default value = 0.05)  <br />
+4- The directory where the simulated sample reads and truth file will be written at <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -o [output direcotry] <br />
+5- The random number required for beginning simulation <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -s [seed] (default value = 0)
+
+## Example
+~~~shell
+./script.simulations.sh -e -p ./samples/SRR1216000 -1 sim_1.fastq -2 sim_2.fastq -c 30000000 -n 0.05 - ./samples_rsem_30M -s 0
+~~~
 
 
 # script.index.sh
 
 This script builds indices on human transcriptome obtained at: <br />
-	wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_27/gencode.v27.annotation.gtf.gz <br />
-	wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_26/GRCh38.p10.genome.fa.gz <br />
+~~~shell
+	wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_27/gencode.v27.annotation.gtf.gz
+	wget ftp://ftp.sanger.ac.uk/pub/gencode/Gencode_human/release_26/GRCh38.p10.genome.fa.gz
+~~~
 The Hera index should be built first using genome + gtf files <br />
 then other methods indices can be built using the output transcriptome by hera built index <br />
  
