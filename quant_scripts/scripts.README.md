@@ -11,17 +11,18 @@ then other methods indices can be built using the output transcriptome by hera b
 Indices for all the methods should be built with this script before running quantifications <br />
 
 ## How to run
+~~~shell
 ./script.index.sh [methods to run] ...
-
+~~~
 ## Methods to run
 ~~~shell
-	-k : kallisto <br />
-	-h : hera with '--grch38 1' option <br />
-	-g : hera without '--grch38 1' option <br />
-	-l : selective alignment <br />
-	-s : star <br />
-	-b : bowtie2 <br />
-	-r : rsem <br />
+	-k : kallisto
+	-h : hera with '--grch38 1' option
+	-g : hera without '--grch38 1' option
+	-l : selective alignment
+	-s : star
+	-b : bowtie2
+	-r : rsem
 ~~~
 ## Additional options
 kmer size: <br />
@@ -29,7 +30,9 @@ For kallisto and selective alignment we can specify the kmer size with which the
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-m [kmer size] (default value = 25)
 
 ## Example
+~~~shell
 ./script.index.sh -kglsb -k 25	
+~~~
 
 ## Ouput indices
 kallisto : ./kallisto.index.[kmer size]  <br />
@@ -46,46 +49,48 @@ This script is for mapping and quantifying with different methods : kallisto, he
 Before running this script, indices for all methods should be built in the same directory where this script is running using "./script.index.sh" <br />
 
 ## How to run
+~~~shell
 ./script.map.sh [methods to run] -p [sample directory] -1 [reads1 fileName] -2 [reads2 fileName] -r [input format] ...
-
+~~~~
 ## Required options
 1- methods to run:  <br />
-	-k : kallisto <br />
-	-h : hera <br />
-	-l : selective alignment <br />
-	-s : star <br />
-	-b : bowtie2 <br />
-	-n : bowtie2 in not sensitive mode <br />
-	-r : rsem <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-k : kallisto <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-h : hera <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-l : selective alignment <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-s : star <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-b : bowtie2 <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-n : bowtie2 in not sensitive mode <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-r : rsem <br />
 2- sample to run: <br />
-	-p [sample directory] : where the sample read files are located <br />
-	-1 [reads1 fileName] <br />
-	-2 [reads2 fileName] <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-p [sample directory] : where the sample read files are located <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-1 [reads1 fileName] <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-2 [reads2 fileName] <br />
 3- input reads format (necessary for mapping with bowtie2) <br />
-	-r f : reads are in fasta format <br />
-	-r q : reads are in fastq format <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-r f : reads are in fasta format <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-r q : reads are in fastq format <br />
 ## Additional options
 1- edit distance - for selective alignment  (default value = 4) <br />
-	-d [edit distance]  <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-d [edit distance]  <br />
 2- index kmer size - for kallisto and selective alignment (default value = 25) <br />
-	-m [kmer size] <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-m [kmer size] <br />
 
 ## Example
+~~~shell
 ./script.map.sh -khlsb -p samples/rsem_sim_30M -1 sim_1.q -2 sim_2.fq -r q -d 4 -m 31
-
+~~~
 ## Result directories
 kallisto : [sample directory]/result.kallisto.k[kmer size] <br />
 hera  : [sample directory]/results.hera1.2 <br />
 selective alignment : [sample directory]/result.SLA09.k[kmer size] <br />
 star : <br />
-	mapping results : [sample directory]/result.star <br />
-	quantification results : [sample directory]/result.star.quant <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	mapping results : [sample directory]/result.star <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	quantification results : [sample directory]/result.star.quant <br />
 bowtie2 : <br />
-	mapping results : [sample directory]/result.bowtie2 <br />
-	quantification results : [sample directory]/result.bowtie2.quant <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	mapping results : [sample directory]/result.bowtie2 <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	quantification results : [sample directory]/result.bowtie2.quant <br />
 bowtie2 not sensitive: <br />
-	mapping results : [sample directory]/result.bowtie2.noSensitive <br />
-	quantification results : [sample directory]/result.bowtie2.noSensitive.quant <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	mapping results : [sample directory]/result.bowtie2.noSensitive <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	quantification results : [sample directory]/result.bowtie2.noSensitive.quant <br />
 
 # script.eval.sh
 
@@ -97,16 +102,18 @@ Quantification results for all methods [kallisto, hera, selective alignment, sta
 
 ## Required options
 1- sample to evaluate <br />
-	-p [sample directory] : where the quantification results and truth file are located <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-p [sample directory] : where the quantification results and truth file are located <br />
 2- truth file <br />
-	-t [truth fileName] : the name of the truth file located at [sample directiory] <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-t [truth fileName] : the name of the truth file located at [sample directiory] <br />
 
 ## Additional options 
 1- index kmer size : for kallisto and selective alignment (default value = 25) <br />
-	-m [kmer size] : which kallisto and selective alignment results want to evaluate <br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-m [kmer size] : which kallisto and selective alignment results want to evaluate <br />
 2- bowtie2 no sensitive <br />
-	-n : evaluate bowti2 results mapped without sensitive option	<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;	-n : evaluate bowti2 results mapped without sensitive option	<br />
 
 ## Example
+~~~shell
 ./script,eval.sh -p samples/rsem_sim_30M -t sim.sim.isoforms.results <br />
+~~~
 
