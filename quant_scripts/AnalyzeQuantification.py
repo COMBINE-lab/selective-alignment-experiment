@@ -21,7 +21,6 @@ def relDiff(c1, c2, DF, cutoff, verbose=False):
     nz is a set of indexes into rd for data points where
     x_i and y_i were not *both* zero.
     """
-    import numpy as np
     rd = pd.DataFrame(data = {"Name" : DF.index, "relDiff" : np.zeros(len(DF.index))*np.nan})
     rd.set_index("Name", inplace=True)
     bothZero = DF.loc[(DF[c1] <= cutoff) & (DF[c2] <= cutoff)].index
@@ -52,11 +51,11 @@ def analyze_method(method, address, index_name, count_name,truth_address,truth_i
 	ans = ans.rename(columns = {truth_count:'count1'})
 	print (method)
 	result = pd.read_table(address,index_col=index_name)
-	
+	print (len(ans.loc[ans['count1'] <= cutoff].index))
 	join_table = result.join(ans,rsuffix="_truth").fillna(0.0)
 
 	rd, nonZero =  relDiff(count_name, 'count1', join_table, cutoff)
-	
+		
 	MARD = np.mean(rd['relDiff'].abs())
 	print ("MARD:\t\t",MARD)
 

@@ -1,6 +1,6 @@
 #1/bin/bash
 
-
+runSalmon=0
 runKallisto=0
 runHera=0
 runHeraNoGRCH=0
@@ -10,8 +10,11 @@ runBowtie2=0
 runRsem=0
 kmer=0
 
-while getopts "khlsbgem:" opt; do
+while getopts "khlsbgeam:" opt; do
     case "$opt" in
+	a) 
+	    runSalmon=1
+	    ;;
         k)
             runKallisto=1
             ;;
@@ -40,10 +43,10 @@ done
 
 
 ### ref files
-ref_directory="./"
-txpfasta="hera1.2.noGRCh38.index/transcripts.fasta"
-genefasta="GRCh38.p10.genome.fa"
-gtf="gencode.v27.annotation.gtf"
+ref_directory=""
+txpfasta="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/hera1.2.noGRCh38.index/transcripts.fasta"
+genefasta="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/GRCh38.p10.genome.fa"
+gtf="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/gencode.v27.annotation.gtf"
 
 
 ### binaries
@@ -54,12 +57,14 @@ starBinary="/home/mohsen/STAR-2.5.3a/bin/Linux_x86_64/STAR"
 bowtie2Binary="/home/mohsen/bowtie2-2.3.3.1-linux-x86_64/bowtie2-build"
 bowtie2Path="/home/mohsen/bowtie2-2.3.3.1-linux-x86_64/"
 rsemBinary="/home/mohsen/RSEM-1.3.0/rsem-prepare-reference"
+salmonBinary="/home/mohsen/Salmon-latest_linux_x86_64/bin/salmon"
 
 ### outputs
 kallistoIndex="kallisto.index.${kmer}"
 heraIndex="hera1.2.index"
 heraIndexNoGRCH="hera1.2.noGRCh38.index"
 slaIndex="SLA09.index.${kmer}"
+salmonIndex="salmon.index.${kmer}"
 starIndex="star.index"
 bowtie2Index="bowtie2.index"
 rsemIndex="rsem.index"
@@ -97,6 +102,15 @@ then
 	echo $cmd
 	eval $cmd
 fi
+
+#salmon index
+if [ $runSalmon == 1 ]
+then
+	cmd="/usr/bin/time -o index.salmon.time.${kmer} \"${salmonBinary}\"  index -t \"${ref_directory}\"/\"${txpfasta}\" -i \"${salmonIndex}\" --type quasi -k ${kmer} -p 16"
+	echo $cmd
+	eval $cmd
+fi
+
 
 #star index
 if [ $runStar == 1 ]

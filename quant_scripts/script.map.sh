@@ -7,6 +7,7 @@ runStar=0
 runBowtie2=0
 runBowtie2noSensitive=0
 runRsem=0
+runSalmon=0
 
 #sample
 sample=""
@@ -18,8 +19,11 @@ readTyp=""
 editDistance=4
 kmer=25
 
-while getopts "khlsbnep:1:2:r:d:m:" opt; do
+while getopts "akhlsbnep:1:2:r:d:m:" opt; do
     case "$opt" in
+	a)
+	    runSalmon=1
+	    ;;
 	k)
             runKallisto=1
             ;;
@@ -63,18 +67,19 @@ while getopts "khlsbnep:1:2:r:d:m:" opt; do
 done
 
 ### ref files
-ref_directory="./"
-txpfasta="hera1.2.noGRCh38.index/transcripts.fasta"
-genefasta="GRCh38.p10.genome.fa"
-gtf="gencode.v27.annotation.gtf"
+ref_directory=""
+txpfasta="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/hera1.2.noGRCh38.index/transcripts.fasta"
+genefasta="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/GRCh38.p10.genome.fa"
+gtf="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/gencode.v27.annotation.gtf"
 
 ### indices
-kallistoIndex="kallisto.index.${kmer}"
-heraIndex="hera1.2.noGRCh38.index"
-slaIndex="SLA09.index.${kmer}"
-starIndex="star.index"
-bowtie2Index="bowtie2.index"
-rsemIndex="rsem.index"
+salmonIndex="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/salmon.index.${kmer}"
+kallistoIndex="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/kallisto.index.${kmer}"
+heraIndex="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/hera1.2.noGRCh38.index"
+slaIndex="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/SLA09.index.${kmer}"
+starIndex="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/star.index"
+bowtie2Index="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/bowtie2.index"
+rsemIndex="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/rsem.index"
 
 ### binaries
 kallistoBinary="/home/mohsen/kallisto_linux-v0.43.1/kallisto"
@@ -87,6 +92,7 @@ salmonBinary="/home/mohsen/Salmon-latest_linux_x86_64/bin/salmon"
 rsemBinary="/home/mohsen/RSEM-1.3.0/rsem-calculate-expression"
 
 ### results
+salmonResults="result.salmon.k${kmer}"
 kallistoResults="result.kallisto.k${kmer}"
 heraResults="result.hera1.2"
 slaResults="result.SLA09.k${kmer}"
@@ -122,6 +128,15 @@ then
 	eval $cmd
 fi
 
+#salmon
+if [ $runSalmon == 1 ]
+then
+	cmd="/usr/bin/time -o \"${sample}\"/quant.salmon.time.k${kmer}  \"${salmonBinary}\"   quant -i \"${salmonIndex}\" -la -1 \"${sample}\"/\"${readPair1}\" -2 \"${sample}\"/\"${readPair2}\" -o \"${sample}\"/\"${salmonResults}\"  -p 16 --rangeFactorizationBins 4"
+	echo $cmd
+	eval $cmd
+fi
+
+
 #star
 if [ $runStar == 1 ]
 then
@@ -141,7 +156,7 @@ then
 	eval "mkdir \"${sample}\"/\"${bowtie2AlignResults}\""
 	cmd="/usr/bin/time -o \"${sample}\"/map.bowtie2.time \"${bowtie2Binary}\"  -${readType} --phred33 --sensitive --dpad 0 --gbar 99999999 --mp 1,1 --np 1 --score-min L,0,-0.1 -I 1 -X 1000 --no-mixed --no-discordant -p 16 -k 200 -x \"${bowtie2Index}\"/index -1 \"${sample}\"/\"${readPair1}\" -2 \"${sample}\"/\"${readPair2}\" | samtools view -S -b -o \"${sample}\"/\"${bowtie2AlignResults}\"/Aligned.out.bam -"
 	echo $cmd
-	eval $cmd
+	#eval $cmd
 
 	cmd="/usr/bin/time -o \"${sample}\"/quant.bowtie2.time  \"${salmonBinary}\" quant -t \"${ref_directory}\"/\"${txpfasta}\"  -la -a \"${sample}\"/\"${bowtie2AlignResults}\"/Aligned.out.bam  -o \"${sample}\"/\"${bowtie2QuantResults}\" -p 16  --useErrorModel --rangeFactorizationBins 4"
 	echo $cmd

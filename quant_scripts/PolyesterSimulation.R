@@ -58,4 +58,4 @@ dir.create(file.path(output_file), showWarnings=TRUE)
 write_true_abund(base, file.path(output_file, "truth.tsv"))
 
 all <- base 
-simulate_experiment_countmat(input_file, readmat=all, outdir=output_file, readlen=100, strand_specific=F, paired=TRUE, error_model='uniform', error_rate=as.double(in_error_rate)) 
+simulate_experiment_countmat(input_file, readmat=all, outdir=output_file, readlen=75, strand_specific=F, paired=TRUE, error_model='uniform', error_rate=as.double(in_error_rate)) 

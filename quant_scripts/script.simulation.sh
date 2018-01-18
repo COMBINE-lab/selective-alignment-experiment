@@ -59,9 +59,9 @@ done
 
 ### ref files
 ref_directory="./"
-txpfasta="hera1.2.noGRCh38.index/transcripts.fasta"
-genefasta="GRCh38.p10.genome.fa"
-gtf="gencode.v27.annotation.gtf"
+txpfasta="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/hera1.2.noGRCh38.index/transcripts.fasta"
+genefasta="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/GRCh38.p10.genome.fa"
+gtf="/mnt/scratch4/SLA-benchmarking/clean-benchmarks/selective-alignment-experiment/quant_scripts/gencode.v27.annotation.gtf"
 
 ### indices
 rsemIndex="rsem.index"
