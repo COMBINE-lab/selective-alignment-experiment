@@ -38,11 +38,13 @@ for (i in seq_along(methods)) {
   m <- methods[[i]]
   k <- sprintf("NumReads.%s",m)
   s <- cor(merged$NumReads, merged[[k]], method='spearman')
-  mrd <- mard(merged, "NumReads", k, cutoff=1.0)
+  mrd <- mard(merged, "NumReads", k, cutoff=0.0)
+  meanae <- mae(merged, "NumReads", k, cutoff=0.0)
   print(sprintf("truth vs. %s", m))
   print("============")
   print(sprintf(" spearman %f", s))
   print(sprintf(" mard %f", mrd))
+  print(sprintf(" MAE %f", meanae))
   cat("\n")
   mnames[[i]] <- m
   spears[[i]] <- s
