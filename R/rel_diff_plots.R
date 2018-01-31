@@ -1,12 +1,13 @@
-source('pluribus/R/readers.R')
-source('pluribus/R/plots.R')
-source('pluribus/R/utils.R')
-source('pluribus/R/metrics.R')
+source('selective-alignment-experiment/R/readers.R')
+source('selective-alignment-experiment/R/plots.R')
+source('selective-alignment-experiment/R/utils.R')
+source('selective-alignment-experiment/R/metrics.R')
 library(jsonlite)
 
+
 d <- jsonlite::read_json('data.json')
-dset <- "30 percent"
-dset_print <- "30percent"
+dset <- "60 percent"
+dset_print <- "60percent"
 
 l <- list()
 

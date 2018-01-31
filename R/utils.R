@@ -31,7 +31,7 @@ merge_tables <- function(dlist, truth=NULL, how_join="outer") {
     m <- truth
     for (idx in seq_along(dlist)) {
       merged1 <- label_cols(dlist[[idx]], names(dlist)[idx])
-      m <- merge(m, merged1, by="Name", how=how_join, all=TRUE)#, suffixes=c("", paste0(".",name)))
+      m <- full_join(m, merged1, by="Name")#merge(m, merged1, by="Name", how=how_join, all=TRUE)
     }
     m[is.na(m)] <- 0.0
     m
