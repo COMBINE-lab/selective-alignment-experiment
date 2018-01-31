@@ -18,7 +18,6 @@ import sys, os
 pwd = os.getcwd()
 bin = "/home/hirak/bio-env/bin/"
 proj_dir = "/home/hirak/Projects/"
-
 ##########################################################
 #Paths for binaries
 #We assume these binaries are available and their path can
@@ -38,6 +37,7 @@ rsem_calculate_expression_binary=os.path.join(bin,"rsem-calculate-expression")
 rsem_simulate_reads_binary=os.path.join(bin,"rsem-simulate-reads")
 ##########################BOWTIE2 BINARY#############################
 bowtie2_binary=os.path.join(bin,"bowtie2")
+bowtie2_build_binary=os.path.join(bin,"bowtie2-build")
 ##########################STAR BINARY################################
 star_binary=os.path.join(bin,"STAR")
 #####################################################################
@@ -46,18 +46,19 @@ star_binary=os.path.join(bin,"STAR")
 kallisto_binary = os.path.join(proj_dir,"kallisto/build/src/kallisto")
 hera_build_binary = os.path.join(proj_dir,"hera/build/hera_build")
 hera_quant_binary = os.path.join(proj_dir,"hera/build/hera")
-salmon_sl_binary = os.path.join(proj_dir,"salmon/build/src/salmon")
-prep_ref_file = "/mnt/scratch6/selective_alignment_data/rsem_prep_ref/reference.transcripts.fa"
-gtf_file = "/mnt/scratch6/selective_alignment_data/gtf/gencode.v26.annotation.gtf"
-genome_file = "/mnt/scratch6/selective_alignment_data/ref/GRCh38.primary_assembly.genome.fa"
+salmon_sl_binary = os.path.join(proj_dir,"salmon_sl/salmon/build/src/salmon")
+salmon = os.path.join(proj_dir,"salmon/build/src/salmon")
+prep_ref_file="/mnt/scratch6/hirak/SLA_benchmark/ref/transcript_clean.fa"
+gtf_file="/mnt/scratch6/hirak/SLA_benchmark/ref/gencode.v27.annotation.gtf"
+genome_file="/mnt/scratch6/hirak/SLA_benchmark/ref/GRCh38.p10.genome.fa"
 #####################################################################
 
 
 ##########################################################
-rsem_transcriptome_full_path="/mnt/scratch6/selective_alignment_data/transcript_clean.fasta"
-rsem_gtf_file="/mnt/scratch6/selective_alignment_data/gtf/gencode.v26.annotation.gtf"
-rsem_mate_1 = "/mnt/scratch6/selective_alignment_data/real_data/ERR188140_1.fastq.gz"
-rsem_mate_2 = "/mnt/scratch6/selective_alignment_data/real_data/ERR188140_2.fastq.gz"
+rsem_transcriptome_full_path="/mnt/scratch6/hirak/SLA_benchmark/ref/transcript_clean.fa"
+rsem_gtf_file="/mnt/scratch6/hirak/SLA_benchmark/ref/gencode.v27.annotation.gtf"
+rsem_mate_1 = "/mnt/scratch6/hirak/SLA_benchmark/real_reads/ERR188140_1.fastq.gz"
+rsem_mate_2 = "/mnt/scratch6/hirak/SLA_benchmark/real_reads/ERR188140_2.fastq.gz"
 rsem_folder= config["out"]
 rsem_exp = os.path.join(rsem_folder,"rsem_exp")
 simulation_folder = os.path.join(rsem_folder,"rsem_sim")
@@ -69,9 +70,25 @@ threads=8
 isoform_result = "model.isoform.result"
 ##########################################################
 
+rule build_slow_indices:
+    threads: 16
+    run:
+        indices_folder=config["indices"]
+        bowtie_ind = os.path.join(indices_folder,"bowtie_ind")
+        star_ind = os.path.join(indices_folder,"star_ind")
+        shell("mkdir -p {}".format(bowtie_ind))
+        shell("mkdir -p {}".format(star_ind))
+        print("building bowtie index")
+        shell("{bowtie2_build_binary} -f {prep_ref_file} {bowtie_ind}/index")
+        print("building star index")
+        shell("{star_binary} --runThreadN 16 --runMode genomeGenerate --genomeDir {star_ind} "
+              " --outFileNamePrefix {star_ind} --genomeFastaFiles "
+              " {prep_ref_file}  --limitGenomeGenerateRAM 57993269973 --genomeChrBinNbits 12")
+
 rule build_indices:
     threads: 16
     run:
+        prep_ref_file="/mnt/scratch6/hirak/SLA_benchmark/old_ref/transcript_clean.fa"
         indices_folder=config["indices"]
         kallisto_ind = os.path.join(indices_folder,"kallisto_ind")
         salmon_ind = os.path.join(indices_folder,"salmon_ind")
@@ -79,12 +96,42 @@ rule build_indices:
         shell("mkdir -p {}".format(salmon_ind))
         shell("mkdir -p {}".format(hera_ind))
         print("building salmon index")
-        #shell("{salmon_sl_binary} index -t {prep_ref_file} -i {salmon_ind} -p 16 -k 25")
+        shell("{salmon_sl_binary} index -t {prep_ref_file} -i {salmon_ind} -p 16 -k 25")
         print("building hera index")
-        print("{hera_build_binary} --fasta {genome_file} --gtf {gtf_file} --outdir {hera_ind}")
-        shell("{hera_build_binary} --fasta {genome_file} --gtf {gtf_file} --outdir {hera_ind}/")
+        #print("{hera_build_binary} --fasta {genome_file} --gtf {gtf_file} --outdir {hera_ind}")
+        #shell("{hera_build_binary} --fasta {genome_file} --gtf {gtf_file} --outdir {hera_ind}/")
         print("building kallisto index")
         shell("{kallisto_binary} index -i {kallisto_ind} -k 25 {prep_ref_file}")
+
+
+
+
+rule run_slow_tools:
+    threads: 16
+    run:
+        quant_folder=config["quant"]
+        indices_folder=config["indices"]
+        bowtie_ind = os.path.join(indices_folder,"bowtie_ind")
+        star_ind = os.path.join(indices_folder,"star_ind")
+        bowtie_out = os.path.join(quant_folder,"bowtie_out")
+        star_out = os.path.join(quant_folder,"star_out")
+        shell("mkdir -p {}".format(bowtie_out))
+        shell("mkdir -p {}".format(star_out))
+        #print("{hera_quant_binary} quant -i {hera_ind} -t 16 -w 1 {simulation_folder}/{} {simulation_folder}/{} -o {hera_out}".format("sim_1.fq","sim_2.fq"))
+        shell("{bowtie2_binary}  --phred33 --sensitive --dpad 0 --gbar 99999999 --mp 1,1 --np 1 "
+              "--np 1 --score-min L,0,-0.1 -I 1 -X 1000 --no-mixed --no-discordant -p 16 -k 200 "
+              "-x {bowtie_ind}/index "
+              "-1 {simulation_folder}/sim_1.fq -2 {simulation_folder}/sim_2.fq | "
+              "samtools view -S -b -o {bowtie_out}/Aligned.out.bam - ")
+        shell("{salmon} quant -t {prep_ref_file} -la -a {bowtie_out}/Aligned.out.bam "
+              " -o {bowtie_out}/ -p 16  --useErrorModel --rangeFactorizationBins 4")
+        shell("{star_binary} --runThreadN 16 --genomeDir {star_ind}  –-outFilterMultimapNmax 200 "
+              "–-outFilterMismatchNoverLmax 0.2 -–alignIntronMin 1000 –-alignIntronMax 0 "
+              "–-limitOutSAMoneReadBytes 1000000 --outSAMtype BAM Unsorted "
+              "--readFilesIn  {simulation_folder}/sim_1.fq {simulation_folder}/sim_2.fq "
+              "--outFileNamePrefix {star_out}/")
+        shell("{salmon} quant -t {prep_ref_file} -la -a {star_out}/Aligned.out.bam "
+              " -o {star_out}/ -p 16  --useErrorModel --rangeFactorizationBins 4")
 
 rule run_fast_tools:
     threads: 16
@@ -101,8 +148,10 @@ rule run_fast_tools:
         shell("mkdir -p {}".format(kallisto_out))
         shell("mkdir -p {}".format(hera_out))
         #print("{hera_quant_binary} quant -i {hera_ind} -t 16 -w 1 {simulation_folder}/{} {simulation_folder}/{} -o {hera_out}".format("sim_1.fq","sim_2.fq"))
-        shell("{hera_quant_binary} quant -i {hera_ind} -t 16 -w 1 {simulation_folder}/sim_1.fq {simulation_folder}/sim_2.fq -o {hera_out}")
-        shell("{salmon_sl_binary} quant -i {salmon_ind} -l IU -1 {simulation_folder}/sim_1.fq -2 {simulation_folder}/sim_2.fq -p 16 -o {salmon_out} --softFilter --editDistance 4 --useRangeClusterEqClasses 4")
+        shell("{hera_quant_binary} quant -w -i {hera_ind} -t 16 -1 {simulation_folder}/sim_1.fq -2 {simulation_folder}/sim_2.fq -o {hera_out}")
+        shell("{salmon_sl_binary} quant  -i {salmon_ind} -l IU -1 {simulation_folder}/sim_1.fq "
+                "-2 {simulation_folder}/sim_2.fq -p 16 -o {salmon_out}"
+                " --softFilter --editDistance 4 --rangeFactorizationBins 4 --writeMappings {salmon_out}/Aligned.sam")
         shell("{kallisto_binary} quant -i {kallisto_ind} -o {kallisto_out} -t 16 {simulation_folder}/sim_1.fq {simulation_folder}/sim_2.fq")
 
 rule run_rsem:
@@ -123,6 +172,29 @@ rule run_rsem:
         shell("{rsem_prepare_reference_binary} --bowtie2 --bowtie2-path {bin} --transcript-to-gene-map  {gid_tid_subset} {rsem_transcriptome_60_percent_path} {ref_folder}/{reference}")
         shell("{rsem_calculate_expression_binary} -p {threads} --paired-end --bowtie2 --bowtie2-path {bin} --paired-end {rsem_mate_1} {rsem_mate_2} {ref_folder}/{reference} {rsem_exp}/{model}")
         shell("{rsem_simulate_reads_binary} {ref_folder}/{reference} {rsem_exp}/model.stat/model.model {rsem_exp}/model.isoforms.results 0.0987 15000000 {simulation_folder}/sim")
+
+rule run_rsem_subset:
+    input:
+        transcriptome={rsem_transcriptome_full_path}
+    output:
+        ref_folder,
+        rsem_exp,
+        simulation_folder
+    threads: 16
+    run:
+        #rsem_transcriptome_60_percent_path = config["tr"]
+        ref_folder_used=config['ref_dir']
+        shell("mkdir -p {}".format(ref_folder))
+        shell("mkdir -p {}".format(rsem_exp))
+        shell("mkdir -p {}".format(simulation_folder))
+        #shell("{rsem_prepare_reference_binary} --bowtie2 --bowtie2-path {bin} "
+        #        "{rsem_transcriptome_60_percent_path} {ref_folder}/{reference}")
+        shell("{rsem_calculate_expression_binary} -p {threads} --paired-end "
+                "--bowtie2 --bowtie2-path {bin} --paired-end {rsem_mate_1} {rsem_mate_2} "
+                "{ref_folder_used}/{reference} {rsem_exp}/{model}")
+        shell("{rsem_simulate_reads_binary} {ref_folder}/{reference} "
+                "{rsem_exp}/model.stat/model.model {rsem_exp}/model.isoforms.results "
+                "0.0987 15000000 {simulation_folder}/sim")
 
 rule run_rsem_prepare_ref:
     input:
