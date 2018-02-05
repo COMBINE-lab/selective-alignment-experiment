@@ -148,7 +148,7 @@ rule run_fast_tools:
         shell("mkdir -p {}".format(kallisto_out))
         shell("mkdir -p {}".format(hera_out))
         #print("{hera_quant_binary} quant -i {hera_ind} -t 16 -w 1 {simulation_folder}/{} {simulation_folder}/{} -o {hera_out}".format("sim_1.fq","sim_2.fq"))
-        shell("{hera_quant_binary} quant -w -i {hera_ind} -t 16 -1 {simulation_folder}/sim_1.fq -2 {simulation_folder}/sim_2.fq -o {hera_out}")
+        shell("{hera_quant_binary} quant -i {hera_ind} -t 16 -1 {simulation_folder}/sim_1.fq -2 {simulation_folder}/sim_2.fq -o {hera_out}")
         shell("{salmon_sl_binary} quant  -i {salmon_ind} -l IU -1 {simulation_folder}/sim_1.fq "
                 "-2 {simulation_folder}/sim_2.fq -p 16 -o {salmon_out}"
                 " --softFilter --editDistance 4 --rangeFactorizationBins 4 --writeMappings {salmon_out}/Aligned.sam")
