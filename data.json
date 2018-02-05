@@ -16,5 +16,30 @@
         "star" : "~/sa_data/30percent/result.star.quant/quant.sf",
         "selaln" : "~/sa_data/30percent/result.SLA09/quant.sf",
         "bowtie2" : "~/sa_data/30percent/result.bowtie2.quant/quant.sf"
+    },
+    "sim 30" : 
+    {
+        "truth" : "~/sa_data/sim30/truth.tsv",
+        "hera" : "~/sa_data/sim30/result.hera1.2/abundance.tsv",
+        "kallisto" : "~/sa_data/sim30/result.kallisto/abundance.tsv",
+        "star" : "~/sa_data/sim30/result.star.quant/quant.sf",
+        "selaln" : "~/sa_data/sim30/result.SLA09/quant.sf",
+        "bowtie2" : "~/sa_data/sim30/result.bowtie2.quant/quant.sf"
+    },
+    "rsem sim 30" : 
+    {
+        "truth" : "~/sa_data/rsem_sim_30M/sim.sim.isoforms.results",
+        "hera" : "~/sa_data/rsem_sim_30M/result.hera1.2/abundance.tsv",
+        "kallisto" : "~/sa_data/rsem_sim_30M/result.kallisto.k25/abundance.tsv",
+        "star" : "~/sa_data/rsem_sim_30M/result.star.quant/quant.sf",
+        "selaln" : "~/sa_data/rsem_sim_30M/result.SLA09.k25/quant.sf",
+        "bowtie2" : "~/sa_data/rsem_sim_30M/result.bowtie2.quant/quant.sf"
+    },
+    "sim 30 poly 0.01":
+    {
+        "truth" : "~/sa_data/polyester_30percent_0.01/truth_real.tsv",
+        "hera" : "~/sa_data/polyester_30percent_0.01/result.hera1.2/abundance.tsv",
+        "kallisto" : "~/sa_data/polyester_30percent_0.01/result.kallisto.k25/abundance.tsv",
+        "selaln" : "~/sa_data/polyester_30percent_0.01/result.SLA09.k25/quant.sf"
     }
 }

@@ -1,10 +1,7 @@
-library(tidyverse)
-source('readers.R')
-source('utils.R')
-source('plots.R')
-source('metrics.R')
-library(jsonlite)
-library(stargazer)
+library(ggplot2)
+require(gridExtra)
+library(MASS)
+library(LSD)
 
 methods = c('hera', 'Bowtie2', 'STAR', 'selaln', 'selaln-or', 'kallisto')
 
@@ -30,26 +27,16 @@ print("merging data frames")
 merged <- merge_tables(dflist, t)
 print(head(merged))
 
-mnames <- rep('', length(methods))
-spears <- rep(0.0, length(methods))
-mards <- rep(0.0, length(methods))
-
 for (i in seq_along(methods)) {
   m <- methods[[i]]
   k <- sprintf("NumReads.%s",m)
-  s <- cor(merged$NumReads, merged[[k]], method='spearman')
-  mrd <- mard(merged, "NumReads", k, cutoff=0.0)
-  meanae <- mae(merged, "NumReads", k, cutoff=0.0)
-  print(sprintf("truth vs. %s", m))
-  print("============")
-  print(sprintf(" spearman %f", s))
-  print(sprintf(" mard %f", mrd))
-  print(sprintf(" MAE %f", meanae))
-  cat("\n")
-  mnames[[i]] <- m
-  spears[[i]] <- s
-  mards[[i]] <- mrd
+  mlab <- sprintf("log(%s count + 1)",m)
+  fname <- sprintf("%s_scatter.pdf",m)
+  p1 <- ggplot(merged, aes(x=merged[['NumReads']]+1, y=merged[[k]]+1)) + 
+    geom_hex(bins=100) + scale_x_log10() + scale_y_log10() + 
+    scale_fill_gradient(trans='log') + theme_classic() + xlab('log(true count + 1)') +
+    ylab(mlab)
+  ggsave(file.path(path,"plots", "scatter", fname), p1)
+  #s <- cor(merged$NumReads, merged[[k]], method='spearman')
+  #p1 <- ggplot(m, aes(x=log(NumReads+1), y=log(k+1))) + geom_point(alpha=0.1) 
 }
-
-res <- data.frame(method=mnames, spearman=spears, mard=mards)
-print(stargazer(res, summary=FALSE))
