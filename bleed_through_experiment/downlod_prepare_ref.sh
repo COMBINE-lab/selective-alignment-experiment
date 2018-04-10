@@ -27,23 +27,23 @@ echo "Unzipping gtf done..."
 
 #generate pc gtf
 echo "Extracting the pc genes..."
-echo "awk -F \"\\\t\" '($3 == \"gene\") { split($9,a,\";\"); if(a[2] ~ \"protein_coding\") print $0; next}{if($1 \!~ \"#\") print $0}' $gtffile > $pcgtffile"
-awk -F "\t" '($3 == "gene") { split($9,a,";"); if(a[2] ~ "protein_coding") print $0; next}{if($1 !~ "#") print $0}' $gtffile > $pcgtffile
+#echo "awk -F \"\\\t\" '($3 == \"gene\") { split($9,a,\";\"); if(a[2] ~ \"protein_coding\") print $0; next}{if($1 \!~ \"#\") print $0}' $gtffile > $pcgtffile"
+#awk -F "\t" '($3 == "gene") { split($9,a,";"); if(a[2] ~ "protein_coding") print $0; next}{if($1 !~ "#") print $0}' $gtffile > $pcgtffile
 
 #generate hera gemome
 echo "Building hera indices..."
-$hera_index_binary --fasta $genome --gtf $pcgtffile --outdir hera_idx_pc
+#$hera_index_binary --fasta $genome --gtf $pcgtffile --outdir hera_idx_pc
 $hera_index_binary --fasta $genome --gtf $gtffile --outdir hera_idx
 
-mv hera_idx_pc/transcripts.fasta ./transcripts_all.fasta
-mv hera_idx/transcripts.fasta ./transcripts_pc.fasta
+#mv hera_idx_pc/transcripts.fasta ./transcripts_pc.fasta
+mv hera_idx/transcripts.fasta ./transcripts_all.fasta
 
 sed '/^>/ s/:.*//' transcripts_all.fasta > transcripts_all.fa
-sed '/^>/ s/:.*//' transcripts_pc.fasta > transcripts_pc.fa
+#sed '/^>/ s/:.*//' transcripts_pc.fasta > transcripts_pc.fa
 
 rm transcripts_all.fasta
-rm transcripts_pc.fasta
-rm -fr hera_idx_pc
+#rm transcripts_pc.fasta
+#rm -fr hera_idx_pc
 rm -fr hera_idx
 
 
