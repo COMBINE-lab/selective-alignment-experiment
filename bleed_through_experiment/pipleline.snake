@@ -68,13 +68,14 @@ rule build_indices:
         prep_ref_file=config['ref']
         gtf_file=config['gtf']
         indices_folder=config["indices"]
+        genome_file=config["genome"]
         kallisto_ind = os.path.join(indices_folder,"kallisto_ind")
         salmon_ind = os.path.join(indices_folder,"salmon_ind")
         salmon_ind_OR = os.path.join(indices_folder,"salmon_ind_OR")
         hera_ind = os.path.join(indices_folder,"hera_ind")
         shell("mkdir -p {}".format(salmon_ind))
         print("building salmon index")
-        shell("{salmon_sl_binary} index -t {prep_ref_file} -i {salmon_ind} -p 16 -k 25")
+        #shell("{salmon_sl_binary} index -t {prep_ref_file} -i {salmon_ind} -p 16 -k 25")
         print("building hera index")
         print("{hera_build_binary} --fasta {genome_file} --gtf {gtf_file} --outdir {hera_ind}")
         shell("{hera_build_binary} --fasta {genome_file} --gtf {gtf_file} --outdir {hera_ind}/")
@@ -101,9 +102,11 @@ rule run_slow_tools:
               "-x {bowtie_ind}/index "
               "-1 {simulation_folder}/sim_1.fq -2 {simulation_folder}/sim_2.fq | "
               "samtools view -S -b -o {bowtie_out}/Aligned.out.bam - ")
+        
         shell("{salmon} quant -t {prep_ref_file} -la -a {bowtie_out}/Aligned.out.bam "
               " -o {bowtie_out}/ -p 16  --useErrorModel --rangeFactorizationBins 4")
-	    shell("{star_binary} --runThreadN 16 --genomeDir {star_ind}  –-outFilterMultimapNmax 200 "
+	    
+        shell("{star_binary} --runThreadN 16 --genomeDir {star_ind}  –-outFilterMultimapNmax 200 "
               "–-outFilterMismatchNoverLmax 0.2 -–alignIntronMin 1000 –-alignIntronMax 0 "
               "–-limitOutSAMoneReadBytes 1000000 --outSAMtype BAM Unsorted "
               "--readFilesIn  {simulation_folder}/sim_1.fq {simulation_folder}/sim_2.fq "
