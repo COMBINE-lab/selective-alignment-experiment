@@ -133,7 +133,7 @@ def getKmerScores(fastafile, prefix):
     for _,l in tqdm(kmer_map.items()):
         if len(l) > threshold:
             for subset in itertools.combinations(l,2):
-                subset = sorted(list(subset))
+                subset = tuple(sorted(list(subset)))
                 t1, t2 = subset
                 if not subset in kmer_sim_score:
                     graph[t1].append(t2)
