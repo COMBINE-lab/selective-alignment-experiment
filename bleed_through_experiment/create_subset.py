@@ -9,8 +9,64 @@ import click
 import os
 import json
 import pickle
+import hashlib
 
-def getKmerScores(fastafile):
+
+def readfq(fp): # this is a generator function
+    last = None # this is a buffer keeping the last unprocessed line
+    while True: # mimic closure; is it a bad idea?
+        if not last: # the first record or a record following a fastq
+            for l in fp: # search for the start of the next record
+                if l[0] in '>@': # fasta/q header line
+                    last = l[:-1] # save this line
+                    break
+        if not last: break
+        name, seqs, last = last[1:].partition(" ")[0], [], None
+        for l in fp: # read the sequence
+            if l[0] in '@+>':
+                last = l[:-1]
+                break
+            seqs.append(l[:-1])
+        if not last or last[0] != '+': # this is a fasta record
+            yield name, ''.join(seqs), None # yield a fasta record
+            if not last: break
+        else: # this is a fastq record
+            seq, leng, seqs = ''.join(seqs), 0, []
+            for l in fp: # read the quality
+                seqs.append(l[:-1])
+                leng += len(l) - 1
+                if leng >= len(seq): # have read enough quality
+                    last = None
+                    yield name, seq, ''.join(seqs); # yield a fastq record
+                    break
+            if last: # reach EOF before reading enough quality
+                yield name, seq, None # yield a fasta record instead
+                break
+
+def fastqObjects(fastafile):
+    #seqences = {}
+    transcript_lengths = {}
+    kmer_map = defaultdict(set)
+    #make kmer hash on the go 
+    k = 31
+    n = 0
+    for name, seq, _ in readfq(open(fastafile)):
+        n += 1
+        transcript_lengths[name] = len(seq)
+        if len(seq) >= k:
+            for i in xrange(len(seq)-k+1):
+                #kmer_hash = hashlib.md5(seq[i:i+k].encode())
+                kmer = seq[i:i+k]
+                kmer_map[kmer].add(name)
+        
+        sys.stdout.write("\r%d transcripts seen"%n)
+        sys.stdout.flush()
+    
+    
+    return transcript_lengths,kmer_map
+
+
+def getKmerScores(fastafile, prefix):
     """
     Generate the graph for k-mer similarity
     Input: Fasta file
@@ -23,28 +79,54 @@ def getKmerScores(fastafile):
 
     """
     #background = "/mnt/scratch1/bleed_through_mouse/ref/Trinity.fasta"
+    
+    print("modified scoring function")
     threshold = 1
-    background = fastafile
-    k=31
-    kmer_map = defaultdict(set)
-    graph = defaultdict(list)
+    #background = fastafile
+    k = 31
+    #kmer_map = defaultdict(set)
+    kmer_map = {}
+    graph = {}
     kmer_sim_score = {}
     transcript_lengths = {}
+    '''
+    if not os.path.exists(prefix + "/kmer_map.json") :    
+        record = (r for r in SeqIO.parse(background, "fasta"))
+        counter = 0
+        for r in record:
+            tname = str(r.id)
+            tseq = str(r.seq)
+            transcript_lengths[tname] = len(tseq)
+            for i in xrange(len(tseq)-k+1):
+                if(len(tseq[i:i+k]) == 31):
 
-    record = (r for r in SeqIO.parse(background, "fasta"))
-    counter = 0
-    for r in record:
-        tname = str(r.id)
-        tseq = str(r.seq)
-        transcript_lengths[tname] = len(tseq)
-        for i in xrange(len(tseq)-k+1):
-            if(len(tseq[i:i+k]) == 31):
-                kmer_map[tseq[i:i+k]].add(tname)
-        counter += 1
-        if(counter%1000 == 0):
-            sys.stdout.write("\r%d transcripts seen"%counter)
-            sys.stdout.flush()
+                    kmer_map[tseq[i:i+k]].add(tname)
+                    # NOTE see if the length of keys in 
+                    # kmer-map exceeds the unique kmers
+            counter += 1
+            if(counter%1000 == 0):
+                sys.stdout.write("\r%d transcripts seen"%counter)
+                sys.stdout.flush()
+        with open(prefix + "/kmer_map.json", "w") as fp:
+            json.dump(kmer_map,fp)
+    else:
+        with  open(prefix + '/kmer_map.json') as fp:
+            kmer_map = json.load(fp) 
+    '''
+
+    if not os.path.exists(prefix + '/kmer_map.pkl'):
+        transcript_lengths, kmer_map = fastqObjects(fastafile)    
+        # NOTE: Just for debugging
+        print ("Number of kmers: {}".format(len(kmer_map.keys())))
+        with open(prefix+"/kmer_map.pkl","wb") as fp:
+            pickle.dump(kmer_map, fp)
         
+        json.dump(transcript_lengths, open(prefix + "/transcript_length.json", 'w'))
+    else:
+        transcript_lengths = json.load(open(prefix + '/transcript_length.json'))
+        kmer_map = pickle.load(open(prefix + '/kmer_map.pkl','rb'))
+
+
     for tr in tqdm(transcript_lengths.keys()):
         graph[tr] = []
 
@@ -55,13 +137,21 @@ def getKmerScores(fastafile):
                     t1, t2 = subset
                     graph[t1].append(t2)
                     graph[t2].append(t1)
-                    kmer_sim_score[subset] = 1
+
+                    kmer_sim_score[subset] = 1.0 / float(transcript_lengths[t1] + transcript_lengths[t2] - 2*k + 2)
                 else:
-                    kmer_sim_score[subset] += 1
+                    kmer_sim_score[subset] += 1.0 / float(transcript_lengths[t1] + transcript_lengths[t2] - 2*k + 2)
+                if kmer_sim_score[subset] > 1.0 :
+                    print(subset, kmer_sim_score[subset], transcript_lengths[t1], transcript_lengths[t2])
+                    for tr in l:
+                        print(tr)
+                    sys.exit(1)
     
+    """
     for subset,score in kmer_sim_score.items():
         t1,t2 = subset
         kmer_sim_score[subset] = float(score) / float(transcript_lengths[t1] + transcript_lengths[t2] - 2*k + 2) 
+    """
 
     return transcript_lengths, kmer_sim_score, graph
 
@@ -160,13 +250,14 @@ def run(fasta, prefix, subset, seed, samp):
     df = pd.DataFrame()
     if os.path.exists(prefix + '/kmer_sim.pkl') and os.path.exists(prefix + '/transcript_length.json') \
          and os.path.exists(prefix + '/graph.json')  :
+        print ("Information for this transcript already exists ")
         transcript_lengths = json.load(open(prefix + "/transcript_length.json"))
         graph = json.load(open(prefix + "/graph.json"))
         kmer_sim_score = pickle.load(open(prefix + "/kmer_sim.pkl","rb"))
 
 
     else:
-        transcript_lengths,kmer_sim_score,graph = getKmerScores(fasta)
+        transcript_lengths,kmer_sim_score,graph = getKmerScores(fasta,prefix)
         print("Writing kmer_sim, graph, transcript lengths .... finishing")
         #df.to_csv( prefix+'/kmer_sim.tsv',sep='\t',index=False)
         with open (prefix + "/kmer_sim.pkl", "wb") as fp:
