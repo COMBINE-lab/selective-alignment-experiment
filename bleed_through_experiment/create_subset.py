@@ -118,8 +118,8 @@ def getKmerScores(fastafile, prefix):
         transcript_lengths, kmer_map = fastqObjects(fastafile)    
         # NOTE: Just for debugging
         print ("Number of kmers: {}".format(len(kmer_map.keys())))
-        with open(prefix+"/kmer_map.pkl","wb") as fp:
-            pickle.dump(kmer_map, fp)
+        #with open(prefix+"/kmer_map.pkl","wb") as fp:
+        #    pickle.dump(kmer_map, fp)
         
         json.dump(transcript_lengths, open(prefix + "/transcript_length.json", 'w'))
     else:
